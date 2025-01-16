@@ -55,15 +55,6 @@ GEN compute_my_relations(long i, GEN args) {
     I_vect = my_H90_vect_2(Labs_cup, Lrel_cup, Lbnr_cup, K, sigma_cup, Ja_vect, p, 1);
     //--------------------------------------------------------------------------------
 
-
-    //--------------------------------------------------------------------------------
-    // This if statement will hopefully not be necessary
-    if (gequal(I_vect, gen_m1)) {
-        I_vect = my_find_I_vect_full(Labs_cup, Lrel_cup, K, sigma_cup, Ja_vect, itos(p));
-    }
-    //--------------------------------------------------------------------------------
-
-
     for (j = 1; j < r_rk + 1; ++j) {
         
         I_rel = rnfidealabstorel(Lrel_cup, gel(I_vect, j));
@@ -269,25 +260,6 @@ int my_relations (GEN K_ext, GEN K, GEN p, int p_int, int p_rk, GEN Ja_vect, int
         // I_vect = my_find_I_vect_full(Labs_cup, Lrel_cup, K, sigma_cup, Ja_vect, p_int);
 
         I_vect = my_H90_vect_2(Labs_cup, Lrel_cup, Lbnr_cup, K, sigma_cup, Ja_vect, stoi(p_int), 1);
-        if (gequal(I_vect,gen_m1))
-        {
-            I_vect = my_find_I_vect_full(Labs_cup, Lrel_cup, K, sigma_cup, Ja_vect, p_int);
-            // return 111;
-        }
-        
-        //DEBUG_PRINT(1, ANSI_COLOR_GREEN "-----------\n\n\nI_vect nr: %d\n\n\n-------------\n%Ps\n" ANSI_COLOR_RESET, i, I_vect);
-
-        // //Test that we get a correct I
-        // if (my_test_H90_ideal(Labs_cup, Lrel_cup, K, sigma_cup, I_vect, my_find_p_gens(K,  stoi(p_int))))
-        // {
-        //     DEBUG_PRINT(1, ANSI_COLOR_GREEN "H90 test passed\n\n" ANSI_COLOR_RESET);
-        // }
-        // else {
-        //     DEBUG_PRINT(1, ANSI_COLOR_RED "H90 test  failed\n\n" ANSI_COLOR_RESET);
-        //     pari_close();
-        //     exit(0);
-        // }
-        // //----- test done
         
         for (j=1; j<=r_rk; ++j) {
             // evaluate cup on j:th basis class (a,J) 

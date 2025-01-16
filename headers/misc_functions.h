@@ -56,31 +56,31 @@ GEN concatenate_rows(GEN M1, GEN M2) {
 }
 
 
-GEN my_xvector (int l, int x) {
-    pari_sp av = avma;
-    GEN vec = zerovec(l);
-    int i; 
-    GEN a = stoi(x);
-    for (i = 1; i < l+1; i++)
-    {
-        gel(vec, i) = a;
-    }
-    return gerepilecopy(av, vec);
+// GEN my_xvector (int l, int x) {
+//     pari_sp av = avma;
+//     GEN vec = zerovec(l);
+//     int i; 
+//     GEN a = stoi(x);
+//     for (i = 1; i < l+1; i++)
+//     {
+//         gel(vec, i) = a;
+//     }
+//     return gerepilecopy(av, vec);
     
-}
+// }
 
-GEN my_xcol (int l, int x) {
-    pari_sp av = avma;
-    GEN vec = zerocol(l);
-    int i; 
-    GEN a = stoi(x);
-    for (i = 1; i < l+1; i++)
-    {
-        gel(vec, i) = a;
-    }
-    return gerepilecopy(av, vec);
+// GEN my_xcol (int l, int x) {
+//     pari_sp av = avma;
+//     GEN vec = zerocol(l);
+//     int i; 
+//     GEN a = stoi(x);
+//     for (i = 1; i < l+1; i++)
+//     {
+//         gel(vec, i) = a;
+//     }
+//     return gerepilecopy(av, vec);
     
-}
+// }
 
 GEN my_int_to_frac_vec (GEN v) {
     pari_sp av = avma;
@@ -1113,17 +1113,17 @@ GEN my_H90_vect (GEN Labs, GEN Lrel, GEN Lbnr, GEN K, GEN sigma, GEN Ja_vect, GE
                 DEBUG_PRINT(1, "\nSearching: %d/%d\n", j, f);
                 // idealfactorback(Labs, mkmat2(gtocol(bnf_get_gen(L)), gtocol(gel(ker_T, j))), NULL, 0);
                 // This is our I+I'' as explained above
-                F_ker_T = idealred0(Labs, idealmul(Labs, F, idealred0(Labs, idealfactorback(Labs, mkmat2(gtocol(bnf_get_gen(Labs)), gtocol(gel(ker_T, j))), NULL, 0), NULL)), NULL);
+                // F_ker_T = idealred0(Labs, idealmul(Labs, F, idealred0(Labs, idealfactorback(Labs, mkmat2(gtocol(bnf_get_gen(Labs)), gtocol(gel(ker_T, j))), NULL, 0), NULL)), NULL);
                 
                 // -----------------------------
-                // I_fact = gadd(bnfisprincipal0(Labs, F, 0), gtocol(gel(ker_T, j)));
+                I_fact = gadd(bnfisprincipal0(Labs, F, 0), gtocol(gel(ker_T, j)));
                 
-                // for (int m = 1; m < lg(cyc); m++)
-                // {
-                //     gel(I_fact, m) = modii(gel(I_fact, m), gel(cyc, m));
+                for (int m = 1; m < lg(cyc); m++)
+                {
+                    gel(I_fact, m) = modii(gel(I_fact, m), gel(cyc, m));
                     
-                // }
-                // F_ker_T = idealfactorback(Labs, mkmat2(gtocol(bnf_get_gen(Labs)), I_fact), NULL, 0);
+                }
+                F_ker_T = idealfactorback(Labs, mkmat2(gtocol(bnf_get_gen(Labs)), I_fact), NULL, 0);
                 // -----------------------------
 
                 // Now find the corresponding t
@@ -1274,6 +1274,7 @@ GEN my_H90_vect_2 (GEN Labs, GEN Lrel, GEN Lbnr, GEN K, GEN sigma, GEN Ja_vect, 
     
     for (i = 1; i <= r_rk; ++i)
     {
+        
         pari_sp av1 = avma;
         done = 0;
         a = gel(gel(Ja_vect, i), 1);
@@ -1319,7 +1320,8 @@ GEN my_H90_vect_2 (GEN Labs, GEN Lrel, GEN Lbnr, GEN K, GEN sigma, GEN Ja_vect, 
                 // This is our I+I'' as explained above
                 I_fact = ZV_ZV_mod(gadd(gel(F, 1), gtocol(gel(ker_T, j))), cyc);
                 F_ker_T = idealred0(Labs, idealfactorback(Labs, mkmat2(gtocol(bnf_get_gen(Labs)), I_fact), NULL, 0), NULL);
-                
+
+
                //------------------------------------------------------------------------------------------------
                 // Now find the t satisfying (1-sigma)I+div(t) = iJ or (1-sigma)I+div(t) = iJ^{-1} if n>1
                 // flag nf_GENMAT: Return t in factored form (compact representation), as a small product of S-units for a small set of finite places S, possibly with huge exponents. This kind of result can be cheaply mapped to K^*/(K^*)^l or to C or Q_p to bounded accuracy and this is usually enough for applications.

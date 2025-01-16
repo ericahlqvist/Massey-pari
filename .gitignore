@@ -8,3 +8,4 @@ Massey-pari.code-workspace
 massey.dSYM/Contents/Info.plist
 massey.dSYM/Contents/Resources/Relocations/aarch64/massey.yml
 make.sh
+settings.json
