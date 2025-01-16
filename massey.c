@@ -92,12 +92,6 @@ main (int argc, char *argv[])
     // Define base field K
     // Use flag nf_FORCE
     K = Buchall(f, nf_FORCE, DEFAULTPREC);
-    //--------------------------------------------------
-
-    // Other possible precisions
-    // MEDDEFAULTPREC, BIGDEFAULTPREC
-
-    //K = Buchall_param(f, 1.5,1.5,4, nf_FORCE, DEFAULTPREC);
 
     //--------------------------------------------------
     // Discriminant
@@ -107,15 +101,8 @@ main (int argc, char *argv[])
     
     //--------------------------------------------------
     // Check Galois
-    GEN gal = galoisconj(K, NULL);
+    if (MY_DEBUGLEVEL >= 1){ my_check_galois(K); }
     
-    if (glength(gal)==nf_get_degree(bnf_get_nf(K)))
-    {
-        pari_printf(ANSI_COLOR_GREEN "\n------------------------\nK is Galois over Q\n------------------------\n\n" ANSI_COLOR_RESET);
-    }
-    else {
-        pari_printf(ANSI_COLOR_RED "\n------------------------\nK is not Galois over Q\n------------------------\n\n" ANSI_COLOR_RESET);
-    }
     //--------------------------------------------------        
 
     // Factor discriminant
@@ -125,75 +112,23 @@ main (int argc, char *argv[])
     // Class group of K (cycle type)
     Kcyc = bnf_get_cyc(K);
     pari_printf("K cyc: %Ps\n\n", Kcyc);
-    // pari_close();
-    // exit(0);
 
     //--------------------------------------------------
     // Test if p divides the class number. If not, then H^1(X, Z/pZ) = 0 and there is nothing to compute. 
-    if (!dvdiu(bnf_get_no(K), p_int))
-    {
-        pari_printf("%Ps does not divide the class number %Ps\n", p, bnf_get_no(K));
-        pari_printf("Disc: %Ps\n", D);
-        pari_close();
-        exit(0);
-    }
-    //--------------------------------------------------
-    //-----------------------------------------------------------------------------------------------------------
-    // // Uncomment this if you just want the polynomials of the unramified deg p extensions
-    //-----------------------------------------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------------------
-    // my_unramified_p_extensions(K, p, D_prime_vect);
-    
-    // pari_close();
-    // exit(0);
-    //--------------------------------------------------------------------------------------
-
+    my_test_p_rank(K, p_int);
 
     //-------------------------------------------------------------------------------------------------------------------
     // Define polynomials for the generating fields for the part of the Hilbert class field corresp to Cl(K)/p. 
     //-------------------------------------------------------------------------------------------------------------------
     p_ClFld_pol = bnrclassfield(K, p, 0, DEFAULTPREC);
-    pari_printf("p Cl Fld: ");
-    pari_printf(ANSI_COLOR_GREEN "Found!\n\n" ANSI_COLOR_RESET);
-    
-    //--------------------------------------------------------------------
-    // To compute absolute polynomials for the class fields, uncomment this
-    //--------------------------------------------------------------------
-    // GEN x = pol_x(fetch_user_var("x"));
-    // GEN y = pol_x(fetch_user_var("y"));
-    // GEN q1, p1, p1red, Lrel;
-    // // pari_printf("base l: %ld\n", glength(base_ext));
-    // // pari_printf("Base_clf: %Ps\n\n", base_clf);
-    // int i;
-    // for (i=1; i<glength(p_ClFld_pol)+1; ++i) {
-    //     p1 = gel(p_ClFld_pol, i);
-    //     q1 = gsubstpol(p1, x, y);
-    //     /* Define Lrel/Labs */
-    //     p1red = rnfpolredbest(K, mkvec2(q1, D_prime_vect), 0);
-    //     //p1red = q1;
-    //     // pari_printf("Reduced polynomial for relative extension found\n");
-    //     Lrel = rnfinit(K, p1red);
-    //     //pari_printf("Lrel found\n");
-    //     pari_printf("\n----------------------------------------------------------------------\n");
-    //     pari_printf("%Ps\n\n", polredbest(rnf_get_polabs(Lrel), 0));
-    //     pari_printf("----------------------------------------------------------------------\n");
-    // }
-    // pari_close();
-    // exit(0);
-    //--------------------------------------------------
-    // GEN clf_pol = polredabs0(mkvec2(bnrclassfield(K, p, 2, DEFAULTPREC), D_prime_vect),0);
-    // pari_printf("H fld pol: %Ps\n\n", clf_pol);
-    // // // GEN clf_pol = bnrclassfield(K, p, 2, DEFAULTPREC);
-    // GEN LAB = Buchall(clf_pol, nf_FORCE, DEFAULTPREC);
-    // pari_printf("L cyc: %Ps\n\n", bnf_get_cyc(LAB));
-    // my_unramified_p_extensions_with_trivial_action(K, p, D_prime_vect);
+    DEBUG_PRINT(1, "p Cl Fld: %Ps\n", p_ClFld_pol);
+    DEBUG_PRINT(1, ANSI_COLOR_GREEN "Found!\n\n" ANSI_COLOR_RESET);
     
     //--------------------------------------------------
     // Find generators for the p-torsion of the class group
     J_vect = my_find_p_gens(K, p);
     p_rk = glength(J_vect);
-    pari_printf("p-rank: %d\n", p_rk);
+    pari_printf("p-rank: %d --> This is the rank of H^1(X,Z/pZ) and H^2(X_fl, mu_p)\n", p_rk);
     //--------------------------------------------------
 
     //--------------------------------------------------
@@ -203,33 +138,13 @@ main (int argc, char *argv[])
     //--------------------------------------------------
     // Define r_rk -- the rank of H^2(X, Z/pZ)
     r_rk = glength(J_vect)+glength(units_mod_p);
-    pari_printf("r-rank: %d\n\n", r_rk);
+    pari_printf("r-rank: %d --> This is the rank of H^2(X,Z/pZ) and H^1(X_fl, mu_p)\n\n\n", r_rk);
     //--------------------------------------------------
 
     //--------------------------------------------------
     // Define the extensions generating the p-part of the Hilbert class field corresponding to CL(K)/p
     GEN K_ext = my_ext(K, p_ClFld_pol, s, p, p_rk, D_prime_vect);
     // pari_printf("Extensions found\n\n");
-    //--------------------------------------------------
-
-    //--------------------------------------------------
-    // Manual input of extensions of the Hilbert class field of Q(sqrt{-5460})
-    //--------------------------------------------------
-    // char *exts[7] = {
-    //     "ext_1",
-    //     "ext_2",
-    //     "ext_3",
-    //     "ext_4",
-    //     "ext_5",
-    //     "ext_6",
-    //     "ext_7"
-    // };
-    // GEN K_ext = mkvecn(p_rk, gp_read_file(exts[0]), gp_read_file(exts[1]), gp_read_file(exts[2]), gp_read_file(exts[3]), gp_read_file(exts[4]), gp_read_file(exts[5]), gp_read_file(exts[6]));
-    // for (int i = 1; i < 8; i++)
-    // {
-    //     gel(K_ext, i) = shallowconcat(gel(K_ext, i), mkvec(bnrinit0(gel(gel(K_ext, i), 1), gen_1, 1)));
-    //     pari_printf("cyc[%d]: %Ps\n", i, bnf_get_cyc(gel(gel(K_ext, i), 1)));
-    // }
     //--------------------------------------------------
 
     //--------------------------------------------------
@@ -256,7 +171,7 @@ main (int argc, char *argv[])
     //---------------------
 
     //--------------------------------------------------
-    // HIGHER MASSEY PRODUCTS
+    // HIGHER MASSEY PRODUCTS (This is only implemented for some Massey products of the form < x, x, ..., x, y > as seen below, but still very useful)
     //--------------------------------------------------
     // Defines a matrix over F_p with index (i*k, j) corresponding to 
     // < x_i, x_i, ..., x_i, x_k, (a_j, J_j) > if i is not equal to j and

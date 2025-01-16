@@ -21,6 +21,27 @@ void print_pari_type(GEN x) {
     }
 }
 
+void my_test_p_rank (GEN K, int p_int) {
+    if (!dvdiu(bnf_get_no(K), p_int))
+    {
+        pari_printf("%d does not divide the class number %Ps\n", p_int, bnf_get_no(K));
+        pari_close();
+        exit(0);
+    }
+}
+
+void my_check_galois(GEN K) {
+    GEN gal = galoisconj(K, NULL);
+    
+    if (glength(gal)==nf_get_degree(bnf_get_nf(K)))
+    {
+        pari_printf(ANSI_COLOR_GREEN "\n------------------------\nK is Galois over Q\n------------------------\n\n" ANSI_COLOR_RESET);
+    }
+    else {
+        pari_printf(ANSI_COLOR_RED "\n------------------------\nK is not Galois over Q\n------------------------\n\n" ANSI_COLOR_RESET);
+    }
+}
+
 GEN concatenate_rows(GEN M1, GEN M2) {
     pari_sp av = avma;
 
