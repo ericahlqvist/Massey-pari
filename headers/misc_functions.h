@@ -684,30 +684,6 @@ GEN my_get_clgp (GEN K)
     return class_group;
 }
 
-// GEN my_ideal_from_exp (GEN K, GEN exp) {
-//     DEBUG_PRINT(1, "\n----------------------------\nSTART: my_ideal_from_exp\n----------------------------\n");
-//     DEBUG_PRINT(1, "exp: %Ps\n", exp);
-//     //pari_sp av = avma;
-//     GEN ideal = idealhnf0(K, gen_1, NULL);
-//     GEN gens = bnf_get_gen(K);
-//     int l = glength(exp);
-//     int i;
-//     for (i = 1; i < l+1; i++)
-//     {
-//         DEBUG_PRINT(1, "%d/%d\n", i, l);
-//         pari_sp av = avma;
-//         ideal = idealred0(K, idealmul(K, ideal, idealred0(K, idealpow(K, gel(gens, i), gel(exp, i)), NULL)), NULL);
-//         ideal = gerepilecopy(av, ideal);
-//         //DEBUG_PRINT(1, "%d/%d\n", i, l);
-//     }
-    
-
-//     //ideal = gerepilecopy(av, ideal);
-//     DEBUG_PRINT(1, "\n----------------------------\nEND: my_ideal_from_exp\n----------------------------\n");
-//     return ideal;
-
-// }
-
 GEN my_vect_from_exp (GEN basis, GEN exp) {
     //DEBUG_PRINT(1, "\nmy_vect_from_exp\n");
     pari_sp av = avma;

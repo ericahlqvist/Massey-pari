@@ -22,12 +22,12 @@
 #define DEBUG_PRINT(level, ...) \
     do { if (MY_DEBUGLEVEL >= (level)) pari_printf(__VA_ARGS__); } while (0)
 
-#include "headers/misc_functions2.h"
+#include "headers/misc_functions.h"
 #include "headers/tests.h"
 #include "headers/artin_symbol.h"
 #include "headers/test_artin.h"
-#include "headers/ext_and_aut2.h"
-#include "headers/find_cup_matrix3.h"
+#include "headers/ext_and_aut.h"
+#include "headers/find_cup_matrix.h"
 
 GEN compute_my_relations(long i, GEN args);
 
