@@ -7,3 +7,4 @@ Massey-pari.code-workspace
 .vscode/tasks.json
 massey.dSYM/Contents/Info.plist
 massey.dSYM/Contents/Resources/Relocations/aarch64/massey.yml
+make.sh
