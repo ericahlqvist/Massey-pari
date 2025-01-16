@@ -57,7 +57,7 @@ GEN my_ext(GEN base, GEN base_clf, GEN p, int p_rk, GEN D_prime_vect)
 
         for (j = 1; j < glength(cx)+1; ++j)
         {
-            if ( (!my_QV_equal(algtobasis(Labs,gel(cx, j)), algtobasis(Labs,y))) && my_QV_equal(galoisapply(Labs, gel(cx,j), s_lift_x), s_lift_x)) 
+            if ( (!ZV_equal(algtobasis(Labs,gel(cx, j)), algtobasis(Labs,y))) && ZV_equal(galoisapply(Labs, gel(cx,j), s_lift_x), s_lift_x)) 
             {
                 sigma = algtobasis(Labs, gel(cx, j));
                 //DEBUG_PRINT(1, "sigma: %Ps\n\n", sigma);

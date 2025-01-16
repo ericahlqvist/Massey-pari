@@ -8,7 +8,7 @@ int my_is_p_torsion (GEN K, GEN J_vect, GEN p) {
         power = idealpow(K, gel(J_vect, i), p);
         is_pr = bnfisprincipal0(K, power, 1);
         test_vec = gel(is_pr, 1);
-        if (!my_QV_equal0(test_vec))
+        if (!ZV_equal0(test_vec))
         {
             is_principal = 0;
         }
@@ -37,7 +37,7 @@ int my_test_H90_ideal (GEN Labs, GEN Lrel, GEN K, GEN sigma, GEN I_vect, GEN J_v
         }
         is_pr = bnfisprincipal0(Labs, test_ideal, 1);
         test_vec = gel(is_pr, 1);
-        if (!my_QV_equal0(test_vec))
+        if (!ZV_equal0(test_vec))
         {
             is_principal = 0;
         }

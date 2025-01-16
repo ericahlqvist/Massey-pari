@@ -1,5 +1,5 @@
 
-
+// For debugging
 void print_pari_type(GEN x) {
     switch (typ(x)) {
         case t_INT:    printf("Type: t_INT (integer)\n"); break;
@@ -55,146 +55,15 @@ GEN concatenate_rows(GEN M1, GEN M2) {
     return gerepilecopy(av, M);
 }
 
-
-// GEN my_xvector (int l, int x) {
-//     pari_sp av = avma;
-//     GEN vec = zerovec(l);
-//     int i; 
-//     GEN a = stoi(x);
-//     for (i = 1; i < l+1; i++)
-//     {
-//         gel(vec, i) = a;
-//     }
-//     return gerepilecopy(av, vec);
-    
-// }
-
-// GEN my_xcol (int l, int x) {
-//     pari_sp av = avma;
-//     GEN vec = zerocol(l);
-//     int i; 
-//     GEN a = stoi(x);
-//     for (i = 1; i < l+1; i++)
-//     {
-//         gel(vec, i) = a;
-//     }
-//     return gerepilecopy(av, vec);
-    
-// }
-
-GEN my_int_to_frac_vec (GEN v) {
-    pari_sp av = avma;
-    GEN vec = zerovec(glength(v));
-    GEN frac = cgetg(3, t_FRAC);
-    int i;
-    for (i = 1; i < glength(v)+1; ++i) {
-        gel(frac, 1) = gel(v,i);
-        gel(frac, 2) = gen_1;
-        gel(vec,i) = frac;
-    }
-    return gerepilecopy(av, vec);
-}
-
-GEN my_QC_add (GEN v1, GEN v2) {
-    pari_sp av = avma;
-    if (!(glength(v1)==glength(v2))) {
-        DEBUG_PRINT(1, ANSI_COLOR_RED "ERROR in my_ZC_add: vectors has different lengths\n\n" ANSI_COLOR_RESET);
-        DEBUG_PRINT(1, "v1: %Ps\n\nv2: %Ps\n\n", v1, v2);
-        exit(111);
-    }
-    GEN sum = zerocol(glength(v1));
-    int i;
-    for (i = 1; i < glength(v1)+1; ++i) {
-        gel(sum,i) = gadd(gel(v1,i), gel(v2,i));
-    }
-    return gerepilecopy(av, sum);
-}
-
-int my_QV_equal1 (GEN v) {
-    
-    int output = 1;
-    int i;
-    if (!gequal1(gel(v,1))) {
-            output = 0;
-        }
-    for (i=2; i<lg(v); ++i) {
-        if (!gequal0(gel(v,i))) {
-            output = 0;
-        }
-    }
-    return output;
-}
-
-int my_QV_equal0 (GEN v) {
-    
-    int output = 1;
-    int i;
-    for (i=1; i<lg(v); ++i) {
-        if (!gequal0(gel(v,i))) {
-            output = 0;
-        }
-    }
-    return output;
-}
-
-int my_QV_equal0_mod_p (GEN v, int p) {
-    
-    int output = 1;
-    int i;
-    for (i=1; i<glength(v)+1; ++i) {
-        if (!(itos(gel(v,i))%p == 0)) {
-            output = 0;
-        }
-    }
-    return output;
-}
-
-int my_QV_equal (GEN v1, GEN v2) {
-    
-    int output = 1;
-    int i;
-    for (i=1; i<glength(v1)+1; ++i) {
-        if (!gequal(gel(v1,i), gel(v2,i))) {
-            output = 0;
-        }
-    }
-    return output;
-}
-
-int my_SQ_MAT_equal (GEN M1, GEN M2) {
-    
-    // DEBUG_PRINT(1, ANSI_COLOR_CYAN "my_SQ_MAT_equal\n\n" ANSI_COLOR_RESET);
-    int output = 1;
-    int i;
-    int j;
-    
-    // outmat(M1);
-    // outmat(M2);
-    for (i = 1; i < glength(gel(M1, 1))+1; ++i) {
-
-        for (j = 1; j < glength(gel(M1, 1))+1; j++)
-        {
-
-            if (!gequal(gel(gel(M1, i), j), gel(gel(M2, i), j))) {
-                
-                return 0;
-            }
-        }
-        
-    }
-    return output;
-}
-
 /*------------------------------------
  The function 1-sigma_x on ideals
 ------------------------------------
+* Input:
 * L - a number field
 * sigma - An auto nfalgtobasis(nf, c[2]) where c = nfgaloisconj(nf);
 * I - an ideal of nf given as a matrix in hnf
 
-* output - (1-\sigma_x)(I)
-
-DEFINITION:
+* Output: (1-\sigma_x)(I)
 -----------------------*/
 
 GEN my_1MS_ideal (GEN L, GEN sigma, GEN I) 
@@ -208,6 +77,13 @@ GEN my_1MS_ideal (GEN L, GEN sigma, GEN I)
 } 
 
 
+/*------------------------------------
+* Input:
+* L - a number field
+* factorization - a factorization of an ideal in L
+
+* Output: a 2 term vector: first component is the vector of primes, second component; the vector of exponents
+-----------------------*/
 
 GEN my_find_primes_in_factorization(GEN LyAbs, GEN factorization) {
     pari_sp av = avma;
@@ -225,6 +101,18 @@ GEN my_find_primes_in_factorization(GEN LyAbs, GEN factorization) {
     return primes_and_es;
 }
 
+
+/*------------------------------------
+ Find the operator (1-\sigma_x)^n
+------------------------------------
+* Input:
+* Labs - a bnf
+* Lbnr - a bnr
+* sigma - An auto nfalgtobasis(nf, c[2]) where c = nfgaloisconj(nf);
+* n - an integer
+
+* Output: The matrix of the operator (1-\sigma_x)^n in the basis of Cl(L)
+-----------------------*/
 GEN my_1MS_operator_2 (GEN Labs, GEN Lbnr, GEN sigma, int n) {
     DEBUG_PRINT(1, "\n------------------------\nStart: my_1MS_operator_2\n------------------------\n\n");
     pari_sp av = avma;
@@ -252,7 +140,7 @@ GEN my_1MS_operator_2 (GEN Labs, GEN Lbnr, GEN sigma, int n) {
 }
 
 
-
+// Relative norm on elements in compact representation
 GEN my_rel_norm_compact(GEN Labs, GEN Lrel, GEN K, GEN compact_elt) {
     DEBUG_PRINT(1, "\n------------------------\nStart: my_rel_norm_compact\n------------------------\n\n");
     pari_sp av = avma;
@@ -269,95 +157,6 @@ GEN my_rel_norm_compact(GEN Labs, GEN Lrel, GEN K, GEN compact_elt) {
     return gerepilecopy(av, norm);
 }
 
-
-// Creates a set (vector) of of exponents in bijection with Cl(L) 
-GEN my_get_vect (int n, GEN cyc)
-{
-    pari_sp av = avma;
-    int b = itos(gel(cyc, n+1));
-    GEN next_vect;
-    
-    if (n > 0) {
-        GEN prev_vect = my_get_vect(n-1, cyc);
-        
-        int l = glength(prev_vect);
-        next_vect = zerovec(b*l);
-        //DEBUG_PRINT(1, "%Ps\n", next_vect);
-        
-        //DEBUG_PRINT(1, "%ld\n", glength(next_vect));
-        int i;
-        for (i = 0; i < b*l; ++i) {
-            double num = i+1;
-            double den = b;
-            int first_index = ceil(num/den);
-            //DEBUG_PRINT(1, "%d\n",first_index);
-            gel(next_vect, i+1) = gconcat(gel(prev_vect, first_index), mkvec(stoi((i+1)%b)));
-            
-        }
-
-    }
-    else {
-        
-        next_vect = zerovec(b);
-
-        int i;
-        for (i = 0; i<b; ++i) {
-            gel(next_vect, i+1) = stoi(i);
-        }
-    }
-    return gerepilecopy(av, next_vect);
-}
-
-GEN my_get_clgp (GEN K)
-{
-    pari_sp av0 = avma;
-    DEBUG_PRINT(1, "-------\n\nComputing the class group\n\n---------\n");
-    GEN Kcyc = bnf_get_cyc(K);
-    GEN Kgen = bnf_get_gen(K);
-    GEN class_number = bnf_get_no(K);
-    int clnr = itos(class_number);
-    int nr_comp = glength(Kcyc);
-    GEN class_group_exp;
-    int n;
-    if (nr_comp > 1) {
-        class_group_exp = my_get_vect( nr_comp - 1, Kcyc );
-    }
-    else {
-        class_group_exp = zerovec(clnr);
-        for (n=0; n<clnr; ++n) {
-            gel(class_group_exp, n+1) = mkvec(stoi(n));
-        }
-    }
-    // DEBUG_PRINT(1, "cyc: %Ps\n\n", Kcyc);
-    // DEBUG_PRINT(1, "cl_gp_exp: %Ps\n\n", class_group_exp);
-    GEN class_group = zerovec(clnr);
-    GEN current_I, exponents, pow;
-    
-    
-    for (n = 1; n < clnr + 1; ++n) {
-        exponents = gel(class_group_exp, n);
-        
-        int i;
-        current_I = idealhnf0(K, gen_1, NULL);
-        for ( i = 1; i < nr_comp + 1; ++i ) {
-            
-            pow = idealpow(K, gel(Kgen, i), gel(exponents, i));
-            
-            current_I = idealmul(K, current_I, pow);
-            // DEBUG_PRINT(1, "ideal norm: ");
-            // output(idealnorm(K, current_I));
-            // DEBUG_PRINT(1, "\n");
-        }
-        if (n%1000 == 0) {
-            DEBUG_PRINT(1, "%d/%d\n", n, clnr);
-        }
-        
-        gel(class_group, n) = idealred0(K, current_I, NULL); 
-    }
-    
-    class_group = gerepilecopy(av0, class_group);
-    return class_group;
-}
 
 GEN my_vect_from_exp (GEN basis, GEN exp) {
     //DEBUG_PRINT(1, "\nmy_vect_from_exp\n");
@@ -410,9 +209,7 @@ GEN my_H90_2 (GEN L, GEN iJ, GEN oneMS_operator, int n) {
     return E;
 }
 
-
-
-
+// Generators for the units of K modulo p
 GEN my_find_units_mod_p (GEN K, GEN p) {
     
     GEN fund_units = bnf_get_fu(K);
@@ -420,26 +217,10 @@ GEN my_find_units_mod_p (GEN K, GEN p) {
     int tors_gp_ord = bnf_get_tuN(K);
 
     GEN units_mod_p = fund_units;
-    // DEBUG_PRINT(1, "A: %Ps\n", gpow(p, stoi(4), DEFAULTPREC));
-    // DEBUG_PRINT(1, "B: %Ps\n", nfpow(K, tors_unit, gpow(p, stoi(4), DEFAULTPREC)));
-    // DEBUG_PRINT(1, "tors_unit: %Ps\n", tors_unit);
-    // DEBUG_PRINT(1, "fund_units: %Ps\n", fund_units);
-    // DEBUG_PRINT(1, "torsion order: %d\n\n", tors_gp_ord);
 
     if (tors_gp_ord%itos(p)==0) {
         units_mod_p = shallowconcat(units_mod_p, mkvec(tors_unit));
     }
-    
-    // DEBUG_PRINT(1, "Units:\n\n");
-    // for (i=1;i<glength(units_mod_p)+1;++i) {
-    //     DEBUG_PRINT(1, "u %d: %Ps\n", i, algtobasis(K, gel(units_mod_p, i)));
-    //     DEBUG_PRINT(1, "u^-1 %d: %Ps\n", i, nfinv(K, algtobasis(K, gel(units_mod_p, i))));
-    // }
-    // DEBUG_PRINT(1, "\n");
-
-    // ad-hoc modification
-    // gel(units_mod_p, 2) = nfmul(K, gel(units_mod_p, 1), gel(units_mod_p, 4));
-    // gel(units_mod_p, 3) = nfdiv(K, gel(units_mod_p, 1), gel(units_mod_p, 4));
 
     return units_mod_p;
 }
@@ -517,6 +298,43 @@ GEN my_find_Ja_vect(GEN K, GEN J_vect, GEN p, GEN units_mod_p) {
     return Ja_vect;
 }
 
+// Creates a set (vector) of of exponents in bijection with Cl(L) 
+GEN my_get_vect (int n, GEN cyc)
+{
+    pari_sp av = avma;
+    int b = itos(gel(cyc, n+1));
+    GEN next_vect;
+    
+    if (n > 0) {
+        GEN prev_vect = my_get_vect(n-1, cyc);
+        
+        int l = glength(prev_vect);
+        next_vect = zerovec(b*l);
+        //DEBUG_PRINT(1, "%Ps\n", next_vect);
+        
+        //DEBUG_PRINT(1, "%ld\n", glength(next_vect));
+        int i;
+        for (i = 0; i < b*l; ++i) {
+            double num = i+1;
+            double den = b;
+            int first_index = ceil(num/den);
+            //DEBUG_PRINT(1, "%d\n",first_index);
+            gel(next_vect, i+1) = gconcat(gel(prev_vect, first_index), mkvec(stoi((i+1)%b)));
+            
+        }
+
+    }
+    else {
+        
+        next_vect = zerovec(b);
+
+        int i;
+        for (i = 0; i<b; ++i) {
+            gel(next_vect, i+1) = stoi(i);
+        }
+    }
+    return gerepilecopy(av, next_vect);
+}
 
 
 GEN my_get_sums (GEN basis, int p) {
@@ -530,12 +348,10 @@ GEN my_get_sums (GEN basis, int p) {
     if (l<2)
     {
         gp = shallowconcat(mkvec(zerocol(glength(gel(basis, 1)))), basis);
-        //DEBUG_PRINT(1, ANSI_COLOR_MAGENTA "gp: %Ps\n" ANSI_COLOR_RESET, gp);
         gp = gerepilecopy(av, gp);
         return gp;
     }
     
-
     else {
         for (i = 1; i <= l; i++)
         {
@@ -543,14 +359,13 @@ GEN my_get_sums (GEN basis, int p) {
         }
         
         GEN exp = my_get_vect( l - 1, cyc );
-        //DEBUG_PRINT(1, ANSI_COLOR_MAGENTA "exp_list: %Ps\n" ANSI_COLOR_RESET, exp);
+        
         for (i = 1; i <= n; i++)
         {
             gel(gp, i) = my_vect_from_exp(basis, gel(exp, i));
         }
     }
-    // DEBUG_PRINT(1, ANSI_COLOR_RED "Basis: %Ps\n" ANSI_COLOR_RESET, basis);
-    // DEBUG_PRINT(1, ANSI_COLOR_RED "Sums: %Ps\n" ANSI_COLOR_RESET, gp);
+
     gp = gerepilecopy(av, gp);
     DEBUG_PRINT(1, "\n--------------------------\nEnd: my_get_sums\n--------------------------\n\n");
     return gp;
@@ -717,13 +532,13 @@ GEN my_H90_vect_2 (GEN Labs, GEN Lrel, GEN Lbnr, GEN K, GEN sigma, GEN Ja_vect, 
                 //------------------------------------------------------------------------------------------------
             }
         }
-        // If some of the I's were never found, then we return -1 and another (slower) function will take over.  
+        
         if (!done)
         {
-            DEBUG_PRINT(1, ANSI_COLOR_RED "my_H90_vect_2 ended with a problem \n" ANSI_COLOR_RESET);
+            DEBUG_PRINT(1, ANSI_COLOR_RED "my_H90_vect_2 ended with a problem: No I found\nThis is unexpected, but can probably be solved by modifying how ker_T is defined \n" ANSI_COLOR_RESET);
             return stoi(-1);
-            // pari_close();
-            // exit(111);
+            pari_close();
+            exit(111);
         }
         I_vect = gerepilecopy(av1, I_vect);
     } 
@@ -734,105 +549,53 @@ GEN my_H90_vect_2 (GEN Labs, GEN Lrel, GEN Lbnr, GEN K, GEN sigma, GEN Ja_vect, 
 }
 
 
+//------------------------------
+// Some old slow function used only in some old tests...
+//------------------------------
 
-// GEN my_H90_12 (GEN Labs, GEN Lrel, GEN K, GEN sigma, GEN a, GEN J, GEN p, int n) {
-//     DEBUG_PRINT(1, ANSI_COLOR_CYAN "\nmy_H90_vect\n" ANSI_COLOR_RESET);
-//     pari_sp av = avma;
-//     int f, j, done = 0;
-//     GEN I, iJ, F, ker_T, ker_T_basis, ker_sol, F_ker_T, t, t_rel, Nt, diff, exp, is_princ, is_norm, cyc;
-//     cyc = gtocol(bnf_get_cyc(Labs));
+
+GEN my_get_clgp (GEN K)
+{
+    pari_sp av0 = avma;
+    DEBUG_PRINT(1, "-------\n\nComputing the class group\n\n---------\n");
+    GEN Kcyc = bnf_get_cyc(K);
+    GEN Kgen = bnf_get_gen(K);
+    GEN class_number = bnf_get_no(K);
+    int clnr = itos(class_number);
+    int nr_comp = glength(Kcyc);
+    GEN class_group_exp;
+    int n;
+    if (nr_comp > 1) {
+        class_group_exp = my_get_vect( nr_comp - 1, Kcyc );
+    }
+    else {
+        class_group_exp = zerovec(clnr);
+        for (n=0; n<clnr; ++n) {
+            gel(class_group_exp, n+1) = mkvec(stoi(n));
+        }
+    }
+
+    GEN class_group = zerovec(clnr);
+    GEN current_I, exponents, pow;
     
     
-
-//     done = 0;
-//     iJ = rnfidealup0(Lrel, J, 1);
-//     F = my_H90(Labs, iJ, sigma, 1);
-//     // DEBUG_PRINT(1, "F: %Ps\n", F);
-//     ker_sol = matsolvemod(my_1MS_operator(Labs, sigma, 1), cyc, zerocol(glength(cyc)), 1);
-//     ker_T_basis = gtovec(gel(ker_sol, 2));
-//     DEBUG_PRINT(1, ANSI_COLOR_GREEN "------------------------\n\n\nker_T_basis size: %ld\n\n\n------------------------\n" ANSI_COLOR_RESET, glength(ker_T_basis));
-    
-//     if (glength(ker_T_basis)==0)
-//     {
-//         I = F;
-//         done = 1;
-//     }
-//     else {
-//         ker_T = my_get_sums(ker_T_basis, itos(p));
-
-//         // WARNING: This makes it faster but might not find the answer. Switch back to the above ker_T
-//         //ker_T = shallowconcat(mkvec(zerocol(glength(gel(ker_T_basis, 1)))), ker_T_basis);
+    for (n = 1; n < clnr + 1; ++n) {
+        exponents = gel(class_group_exp, n);
         
-//         //DEBUG_PRINT(1, ANSI_COLOR_CYAN "ker_T: %Ps\n" ANSI_COLOR_RESET, ker_T);
-//         // DEBUG_PRINT(1, "ker_T[2]: %Ps\n", gel(ker_T, 2));
-//         f = glength(ker_T);
-//         DEBUG_PRINT(1, "Searching a chunk of ker (1-sigma) of size: %d\n", f);
-//         /*
-//             Find F_ker_T --------------------
-//         */
+        int i;
+        current_I = idealhnf0(K, gen_1, NULL);
+        for ( i = 1; i < nr_comp + 1; ++i ) {
+            
+            pow = idealpow(K, gel(Kgen, i), gel(exponents, i));
+            current_I = idealmul(K, current_I, pow);
+        }
+        if (n%1000 == 0) {
+            DEBUG_PRINT(1, "%d/%d\n", n, clnr);
+        }
         
-//         for (j = 1; j <= f; j++)
-//         {
-//             DEBUG_PRINT(1, "\nSearching: %d/%d\n", j, f);
-//             // DEBUG_PRINT(1, "Adding the exp: %Ps\n", gel(ker_T, j));
-//             // DEBUG_PRINT(1, "And the ideal: %Ps\n", my_ideal_from_exp(Labs, gel(ker_T, j)));
-//             F_ker_T = idealred0(Labs, idealmul(Labs, F, idealred0(Labs, my_ideal_from_exp(Labs, gel(ker_T, j)), NULL)), NULL);
-//             //DEBUG_PRINT(1, "F_ker_T: %Ps\n", F_ker_T);
-//             is_princ = bnfisprincipal0(Labs, idealdiv(Labs, iJ, my_1MS_ideal(Labs, sigma, F_ker_T)), 1);
-//             if (!my_QV_equal0(gel(is_princ, 1)))
-//             {
-//                 DEBUG_PRINT(1, ANSI_COLOR_RED "Problem in my_H90_vect\n" ANSI_COLOR_RESET);
-//                 pari_close();
-//                 exit(111);
-//             }
-            
-//             t = gel(is_princ, 2);
-//             DEBUG_PRINT(1, "t: %ld\n", glength(t));
-//             if (glength(t)==0)
-//             {
-//                 return stoi(-1);
-//             }
-            
-//             t_rel = rnfeltabstorel(Lrel, t);
-//             Nt = rnfeltnorm(Lrel, t_rel);
-//             diff = nfmul(K, Nt, a);
-//             exp = bnfisunit0(K, diff, NULL);
-//             // DEBUG_PRINT(1, ANSI_COLOR_YELLOW "exp: %Ps\n" ANSI_COLOR_RESET, exp);
-//             // DEBUG_PRINT(1, "M: %Ps\n", my_norm_operator(Labs, Lrel, K, p));
-//             // DEBUG_PRINT(1, "D: %Ps\n", my_xcol(glength(exp), itos(p)));
-//             // DEBUG_PRINT(1, "B: %Ps\n", gtocol(exp));
-//             /* check if exp lies in the image of the operator associated to N: (O_L)^x -> (O_K)^x */
-//             // if (my_QV_equal0(my_norm_operator(Labs, Lrel, K, p)))
-//             // {
-//             //     gel(I_vect, i) = F_ker_T;
-//             //     done = 1;
-//             //     break;
-//             // }
-//             is_norm = matsolvemod(my_norm_operator(Labs, Lrel, K, p), zerocol(glength(exp)), gtocol(exp), 0);
-//             //DEBUG_PRINT(1, ANSI_COLOR_CYAN "is_norm: %Ps\n" ANSI_COLOR_RESET, is_norm);
-//             if (my_QV_equal0(exp) || !gequal0(is_norm))
-//             {
-//                 //DEBUG_PRINT(1, ANSI_COLOR_CYAN "Norm of elt with exp: %Ps\n" ANSI_COLOR_RESET, is_norm);
-//                 // w = gel(bnf_get_fu(Labs), 1);
-//                 // w_rel = rnfeltabstorel(Lrel, w);
-//                 // Nw = rnfeltnorm(Lrel, w_rel);
-//                 // DEBUG_PRINT(1, "Norm w: %Ps\n", Nw);
-//                 I = F_ker_T;
-//                 done = 1;
-//                 break;
-//             }
-//         }
-//     }
-//     if (!done)
-//     {
-//         DEBUG_PRINT(1, ANSI_COLOR_RED "my_H90_vect ended with a problem \n" ANSI_COLOR_RESET);
-//         return stoi(-1);
-//         // pari_close();
-//         // exit(111);
-//     }
+        gel(class_group, n) = idealred0(K, current_I, NULL); 
+    }
     
-    
-//     I = gerepilecopy(av, I);
-//     return I;
-// }
-
+    class_group = gerepilecopy(av0, class_group);
+    return class_group;
+}
