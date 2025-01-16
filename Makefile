@@ -6,10 +6,10 @@ TARGET = massey
 CC = clang
 
 # Compiler flags. The variable $PARI must be set to the PARI/GP installation directory.
-CPPFLAGS   = -I. -I($PARI)/GPDIR/include 
+CPPFLAGS   = -I. -I$(PARI)/GPDIR/include 
 CFLAGS = -O3 -Wall -fno-strict-aliasing -fomit-frame-pointer -pipe -flto=thin -march=native -pthread -g
 LDFLAGS = -Wl,-O3 -pthread
-LIBS = -L($PARI)/GPDIR/lib -lpari -lm 
+LIBS = -L$(PARI)/GPDIR/lib -lpari -lm 
 #STATIC = -static
 
 # Compilation.
