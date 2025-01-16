@@ -33,7 +33,7 @@ int my_test_H90_ideal (GEN Labs, GEN Lrel, GEN K, GEN sigma, GEN I_vect, GEN J_v
             test_ideal = idealdiv(Labs, iJ, my_1MS_ideal(Labs, sigma, gel(I_vect, i)));
         }
         else {
-            test_ideal = my_SM1_ideal(Labs, sigma, gel(I_vect, i));
+            test_ideal = idealinv(Labs, my_1MS_ideal(Labs, sigma, gel(I_vect, i)));
         }
         is_pr = bnfisprincipal0(Labs, test_ideal, 1);
         test_vec = gel(is_pr, 1);

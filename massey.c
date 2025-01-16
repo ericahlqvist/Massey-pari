@@ -4,8 +4,6 @@
 #include <stdio.h>
 #include <time.h>
 
-// #define NUM_THREADS 4
-
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
 #define ANSI_COLOR_YELLOW  "\x1b[33m"
@@ -18,7 +16,6 @@
 #define MY_DEBUGLEVEL 0
 
 // Debug printing function
-// Debug macro
 #define DEBUG_PRINT(level, ...) \
     do { if (MY_DEBUGLEVEL >= (level)) pari_printf(__VA_ARGS__); } while (0)
 
@@ -29,35 +26,23 @@
 #include "headers/ext_and_aut.h"
 #include "headers/find_cup_matrix.h"
 
+// Function prototype for parallel computation
 GEN compute_my_relations(long i, GEN args);
-
-
 
 int
 main (int argc, char *argv[])	  
 {
-    //--------
-    
+    printf(ANSI_COLOR_YELLOW "\n---------------------------------------------------------------------------------------------------------\nStarting program: finding Massey products and relations for Q_2\n---------------------------------------------------------------------------------------------------------\n\n" ANSI_COLOR_RESET);
+
     // Start timer (actual time)
     struct timespec start_time, end_time;
     clock_gettime(CLOCK_MONOTONIC, &start_time);
     
     // Start timer (CPU time)
     clock_t start = clock();
-    // pari_timer ti;
-    //  timer_pari_printf(&ti,"   %Ps ");
-    // timer_delay
-    //--------
-    printf("\n---------------------------------------------------------------------------------------------------------\nStarting program: finding Massey products and relations for Q_2\n---------------------------------------------------------------------------------------------------------\n\n");
+
+    int p_int, p_rk, r_rk, min, sec, msec;
     
-    int p_int, p_rk, r_rk;
-
-    int min;
-    int sec;
-    int msec;
-    
-
-
     //--------------------------------------------------
     // Initialize PARI/GP
     //--------------------------------------------------
@@ -68,17 +53,10 @@ main (int argc, char *argv[])
     pari_mt_init(); /* ... THEN initialize parallelism */
     paristack_setsize(1L<<30, 1L<<33);
     sd_threadsizemax("2147483648", 0);
-    setalldebug(0);
-    
-
-
-
-
+    //setalldebug(0);
     //--------------------------------------------------
     
-    GEN p, s=pol_x(fetch_user_var("s"));
-    
-    GEN K, f, Kcyc, p_ClFld_pol, J_vect, Ja_vect, D, D_prime_vect;
+    GEN p, K, f, Kcyc, p_ClFld_pol, J_vect, Ja_vect, D, D_prime_vect;
 
     // Read the prime number p from arguments
     p = gp_read_str(argv[1]);
@@ -86,11 +64,10 @@ main (int argc, char *argv[])
     
     // Read the defining polynomial for K
     f = gp_read_str(argv[2]);
-    pari_printf("\nPOL: %Ps\n\n", f);
+    pari_printf("K pol: %Ps\n\n", f);
     
     //--------------------------------------------------
     // Define base field K
-    // Use flag nf_FORCE
     K = Buchall(f, nf_FORCE, DEFAULTPREC);
 
     //--------------------------------------------------
@@ -128,22 +105,22 @@ main (int argc, char *argv[])
     // Find generators for the p-torsion of the class group
     J_vect = my_find_p_gens(K, p);
     p_rk = glength(J_vect);
-    pari_printf("p-rank: %d --> This is the rank of H^1(X,Z/pZ) and H^2(X_fl, mu_p)\n", p_rk);
+    pari_printf("p-rank: %d --> This is the rank of H^1(X,Z/pZ) and H^2(X_fl, mu_p)\n\n", p_rk);
     //--------------------------------------------------
 
     //--------------------------------------------------
     // find generators for the group of units modulo p
     GEN units_mod_p = my_find_units_mod_p(K, p);
-    pari_printf("Nr of units mod p: %ld\n", glength(units_mod_p));
+    DEBUG_PRINT(1, "Nr of units mod p: %ld\n", glength(units_mod_p));
     //--------------------------------------------------
     // Define r_rk -- the rank of H^2(X, Z/pZ)
     r_rk = glength(J_vect)+glength(units_mod_p);
-    pari_printf("r-rank: %d --> This is the rank of H^2(X,Z/pZ) and H^1(X_fl, mu_p)\n\n\n", r_rk);
+    pari_printf("r-rank: %d --> This is the rank of H^2(X,Z/pZ) and H^1(X_fl, mu_p)\n\n", r_rk);
     //--------------------------------------------------
 
     //--------------------------------------------------
     // Define the extensions generating the p-part of the Hilbert class field corresponding to CL(K)/p
-    GEN K_ext = my_ext(K, p_ClFld_pol, s, p, p_rk, D_prime_vect);
+    GEN K_ext = my_ext(K, p_ClFld_pol, p, p_rk, D_prime_vect);
     // pari_printf("Extensions found\n\n");
     //--------------------------------------------------
 
@@ -177,35 +154,16 @@ main (int argc, char *argv[])
     // < x_i, x_i, ..., x_i, x_k, (a_j, J_j) > if i is not equal to j and
     //--------------------------------------------------
 
-    pari_printf("\n");
-    int rk_3_fold, rk_5_fold;
     if ((mat_rk<3 && p_int>2) || (mat_rk==0 && p_int==2))
     {
-        pari_printf("\nSTART: 3-fold\n\n");
-        rk_3_fold = my_massey_matrix(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk, 2);
-        if (rk_3_fold==0)
-        {
-            pari_printf("\nSTART: 5-fold\n\n");
-            rk_5_fold = my_massey_matrix(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk, 4);
-            if (rk_5_fold==0)
-            {
-                pari_printf("\nSTART: 7-fold\n\n");
-                my_massey_matrix(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk, 6);
-            }
-        }
-        
-    }
+        my_print_massey(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk);
+    }    
+    
     //--------------------------------------------------
 
     DEBUG_PRINT(0, ANSI_COLOR_GREEN "Done! \n \n" ANSI_COLOR_YELLOW);
    
     pari_close();
-
-
-
-
-
-
 
 
 
@@ -238,7 +196,7 @@ main (int argc, char *argv[])
     sec = (duration/1000)%60;
     min = duration/60000;
 
-    printf (ANSI_COLOR_YELLOW "CPU time: %d min, %d,%d sec\n\n" ANSI_COLOR_RESET, min, sec, msec);
+    printf (ANSI_COLOR_YELLOW "CPU time: %d min, %d,%d sec\n" ANSI_COLOR_RESET, min, sec, msec);
     //--------------------------------------------------
     printf("\n---------------------------------------------------------------------------------------------------------\nEnd program\n---------------------------------------------------------------------------------------------------------\n\n");
     return 0;

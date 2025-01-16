@@ -2,11 +2,11 @@
 Generates all extensions of base together with all necessary automorphisms 
 */
 
-GEN my_ext(GEN base, GEN base_clf, GEN s, GEN p, int p_rk, GEN D_prime_vect) 
+GEN my_ext(GEN base, GEN base_clf, GEN p, int p_rk, GEN D_prime_vect) 
 {   
     pari_sp av = avma;
     DEBUG_PRINT(1, "\n--------------------------\nStart: my_ext\n--------------------------\n\n");
-    GEN x, y, p1, q1, p1red, Lrel, Labs, Lbnr, s_lift_x, cx, sigma;
+    GEN x, y, p1, q1, p1red, Lrel, Labs, Lbnr, s_lift_x, cx, sigma, s=pol_x(fetch_user_var("s"));
 
     x = pol_x(fetch_user_var("x"));
     y = pol_x(fetch_user_var("y"));
