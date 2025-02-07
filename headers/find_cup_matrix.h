@@ -611,12 +611,12 @@ int my_massey_matrix (GEN K_ext, GEN K, GEN p, int p_int, int p_rk, GEN Ja_vect,
 
 void my_print_massey(GEN K_ext, GEN K, GEN p, int p_int, int p_rk, GEN Ja_vect, int r_rk) {
     int rk_3_fold, rk_5_fold;
-    pari_printf("\nSTART: 3-fold\n\n");
+    DEBUG_PRINT(1, "\nSTART: 3-fold\n\n");
     rk_3_fold = my_massey_matrix(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk, 2);
     DEBUG_PRINT(1, "rk_3_fold: %d\n", rk_3_fold);
     if (rk_3_fold==0)
     {
-        pari_printf("\nSTART: 5-fold\n\n");
+        DEBUG_PRINT(1, "\nSTART: 5-fold\n\n");
         rk_5_fold = my_massey_matrix(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk, 4);
         DEBUG_PRINT(1, "rk_5_fold: %d\n", rk_5_fold);
         if (rk_5_fold==0)
