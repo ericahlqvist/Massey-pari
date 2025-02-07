@@ -594,8 +594,8 @@ int my_massey_matrix (GEN K_ext, GEN K, GEN p, int p_int, int p_rk, GEN Ja_vect,
                             }
                             gel(next_col, j) = stoi(my_Artin_symbol(Labs, Lrel, K, idealred(K,NIpJ), p_int)%p_int);
                         }
-                        DEBUG_PRINT(1, ANSI_COLOR_YELLOW "\n-----------------------------------------\n%d-fold Massey < x, x, ..., x, y >: \n-----------------------------------------\n\n" ANSI_COLOR_RESET, n+5); 
-                        DEBUG_PRINT(1, ANSI_COLOR_CYAN "%Ps\n\n-------------------------\n\n" ANSI_COLOR_RESET, next_col);
+                        DEBUG_PRINT(0, ANSI_COLOR_YELLOW "\n-----------------------------------------\n%d-fold Massey < x, x, ..., x, y >: \n-----------------------------------------\n\n" ANSI_COLOR_RESET, n+5); 
+                        DEBUG_PRINT(0, ANSI_COLOR_CYAN "%Ps\n\n-------------------------\n\n" ANSI_COLOR_RESET, next_col);
                     }
                     
                 }
@@ -613,10 +613,12 @@ void my_print_massey(GEN K_ext, GEN K, GEN p, int p_int, int p_rk, GEN Ja_vect, 
     int rk_3_fold, rk_5_fold;
     pari_printf("\nSTART: 3-fold\n\n");
     rk_3_fold = my_massey_matrix(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk, 2);
+    DEBUG_PRINT(1, "rk_3_fold: %d\n", rk_3_fold);
     if (rk_3_fold==0)
     {
         pari_printf("\nSTART: 5-fold\n\n");
         rk_5_fold = my_massey_matrix(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk, 4);
+        DEBUG_PRINT(1, "rk_5_fold: %d\n", rk_5_fold);
         if (rk_5_fold==0)
         {
             pari_printf("\nSTART: 7-fold\n\n");
