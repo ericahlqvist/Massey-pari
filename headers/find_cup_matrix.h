@@ -75,7 +75,7 @@ GEN compute_my_relations(long i, GEN args) {
                 
             }
             if (i == k) {
-                
+                // The Bockstein case ...
                 gmael2(s_cup_matrix, j, (2 * p_rk - (i - 2)) * (i - 1) / 2 + k - (i - 1)) = stoi(my_Artin_symbol(Labs, Lrel, K, gel(gel(Ja_vect, j), 2), itos(p))%itos(p));
                 gmael2(s_cup_matrix_full, j, p_rk * (k - 1) + i) = gmael2(s_cup_matrix, j, (2 * p_rk - (i - 2)) * (i - 1) / 2 + k - (i - 1));
                 
@@ -342,7 +342,7 @@ int my_relations (GEN K_ext, GEN K, GEN p, int p_int, int p_rk, GEN Ja_vect, int
     for (j=1; j<=nr_row; ++j) {
         DEBUG_PRINT(1, ANSI_COLOR_CYAN "%Ps\n\n" ANSI_COLOR_RESET, gel(cup_matrix, j));
     }
-    DEBUG_PRINT(1, ANSI_COLOR_RED "For indices (i,i) we have B(x_i) instead of x_i cup x_i to get the correct presentation of Q_2.\n\n" ANSI_COLOR_RESET);
+    DEBUG_PRINT(1, ANSI_COLOR_RED "For indices (i,i) we have B(x_i) instead of x_i cup x_i to get the correct presentation of Q_2 (Koch 7.23 vs Koch 7.24).\n\n" ANSI_COLOR_RESET);
     
     DEBUG_PRINT(0, ANSI_COLOR_CYAN "This determines the second quotient Q_2 for the lower p-central series and not only the Zassenhaus quotient ZQ_2.\n\n" ANSI_COLOR_RESET);
     DEBUG_PRINT(0, "---------------------------------------------------------------------------------------------------------\n\n");
