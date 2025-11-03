@@ -91,6 +91,10 @@ main (int argc, char *argv[])
     //--------------------------------------------------
     // Test if p divides the class number. If not, then H^1(X, Z/pZ) = 0 and there is nothing to compute. 
     my_test_p_rank(K, p_int);
+    
+    //--------------------------------------------------
+    // Find data of unramified extensions
+    // my_unramified_p_extensions(K, p, D_prime_vect);
 
     //-------------------------------------------------------------------------------------------------------------------
     // Define polynomials for the generating fields for the part of the Hilbert class field corresp to Cl(K)/p. 

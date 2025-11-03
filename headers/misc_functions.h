@@ -599,3 +599,95 @@ GEN my_get_clgp (GEN K)
     class_group = gerepilecopy(av0, class_group);
     return class_group;
 }
+
+void my_unramified_p_extensions(GEN K, GEN p, GEN D_prime_vect) {
+    DEBUG_PRINT(0, "\n--------------------------\nStart: my_unramified_p_extensions\n--------------------------\n\n");
+    pari_sp av = avma;
+    int i;
+    GEN s = pol_x(fetch_user_var("s"));
+    GEN x = pol_x(fetch_user_var("x"));
+    GEN index = mkvec(p);
+    // GEN R = nfsubfields0(clf_pol,4,1);
+    // DEBUG_PRINT(1, "subgrouplist: %Ps\n", subgrouplist0(bnf_get_cyc(K), mkvec(gpow(p,gen_2, DEFAULTPREC)), 0));
+
+    GEN R = bnrclassfield(K, subgrouplist0(bnf_get_cyc(K), index, 2), 2, DEFAULTPREC);
+    //GEN Rsq = bnrclassfield(K, subgrouplist0(bnf_get_cyc(K), mkvec(gpow(p,gen_2, DEFAULTPREC)), 2), 2, DEFAULTPREC);
+    //GEN Rcb = bnrclassfield(K, subgrouplist0(bnf_get_cyc(K), mkvec(gpow(p,stoi(3), DEFAULTPREC)), 2), 2, DEFAULTPREC);
+    GEN abs_pol;
+    DEBUG_PRINT(0, "[p]-extensions:\n\n");
+    for (i=1;i<lg(R);i++) {
+        //DEBUG_PRINT(1, "i: %d\n", i);
+        abs_pol = polredabs0(mkvec2(gel(R, i), D_prime_vect), 0);
+        //abs_pol = polredabs(gel(R, i));
+        DEBUG_PRINT(0, "%Ps, cyc: %Ps\n", gsubstpol(abs_pol, x, s), bnf_get_cyc(Buchall(abs_pol, nf_GEN, DEFAULTPREC)));
+        
+    }
+    DEBUG_PRINT(0, "\n");
+    // DEBUG_PRINT(1, "[p,p]-extensions:\n\n");
+    // for (i=1;i<glength(Rsq)+1;i++) {
+    //     abs_pol = polredabs0(mkvec2(gel(Rsq, i), D_prime_vect), 0);
+    //     //abs_pol = polredabs(gel(R, i));
+    //     DEBUG_PRINT(1, "%Ps, cyc: %Ps\n", gsubstpol(abs_pol, x, s), bnf_get_cyc(Buchall(abs_pol, nf_FORCE, DEFAULTPREC)));
+    // }
+    // DEBUG_PRINT(1, "\n");
+    // DEBUG_PRINT(1, "[p,p,p]-extensions:\n\n");
+    // for (i=1;i<glength(Rcb)+1;i++) {
+    //     abs_pol = polredabs0(mkvec2(gel(Rcb, i), D_prime_vect), 0);
+    //     //abs_pol = polredabs(gel(R, i));
+    //     DEBUG_PRINT(1, "%Ps, cyc: %Ps\n", gsubstpol(abs_pol, x, s), bnf_get_cyc(Buchall(abs_pol, nf_FORCE, DEFAULTPREC)));
+    // }
+    // DEBUG_PRINT(1, "\n");
+    avma = av;
+    DEBUG_PRINT(0, "\n--------------------------\nEnd: my_unramified_p_extensions\n--------------------------\n\n");
+}
+
+GEN my_ideal_lifts (GEN Labs, GEN Lrel, GEN K, GEN p) {
+    DEBUG_PRINT(1, "\n--------------------------\nStart: my_ideal_lifts\n--------------------------\n\n");
+    pari_sp av0 = avma;
+    GEN I, I_rel, lift_I, Kgens, lift_vect;
+    int i;
+    Kgens = bnf_get_gen(K);
+    lift_vect = zerovec(glength(Kgens));
+
+    for (i = 1; i < lg(Kgens); i++)
+    {
+        pari_sp av = avma;
+        I = gel(Kgens, i);
+        I_rel = rnfidealup0(Lrel, I, 1);
+        lift_I = idealred0(Labs, I_rel, NULL);
+        gel(lift_vect, i) = bnfisprincipal0(Labs, lift_I, 0);
+        lift_vect = gerepilecopy(av, lift_vect);
+    }
+
+    lift_vect = gerepilecopy(av0, lift_vect);
+    DEBUG_PRINT(1, "\n--------------------------\nEnd: my_ideal_lifts\n--------------------------\n\n");
+    return lift_vect;
+}
+
+void my_unramified_p_extensions_with_transfer(GEN K, GEN p, GEN D_prime_vect) {
+    DEBUG_PRINT(0, "\n--------------------------\nStart: my_unramified_p_extensions\n--------------------------\n\n");
+    pari_sp av = avma;
+    int i;
+    GEN s = pol_x(fetch_user_var("s"));
+    GEN x = pol_x(fetch_user_var("x"));
+    GEN index = mkvec(p);
+    GEN Lrel, ext_vect, Labs, cyc;
+
+    GEN R = bnrclassfield(K, subgrouplist0(bnf_get_cyc(K), index, 2), 0, DEFAULTPREC);
+    DEBUG_PRINT(1, "Extensions: %Ps\n", R);
+    
+    GEN abs_pol;
+    DEBUG_PRINT(0, "Transfer kernels:\n\n");
+    for (i=1;i<lg(R);i++) {
+        Lrel = rnfinit(K, gel(gel(R, i), 1));
+        DEBUG_PRINT(1, "Lrel: %Ps\n", rnf_get_pol(Lrel));
+        Labs = Buchall(rnf_get_polabs(Lrel), nf_FORCE, DEFAULTPREC);
+        cyc = bnf_get_cyc(Labs);
+        DEBUG_PRINT(0, "cyc: %Ps\t pol: %Ps\n", cyc, gsubstpol(rnf_get_polabs(Lrel),x,s));
+        ext_vect = my_ideal_lifts(Labs, Lrel, K, p);
+        DEBUG_PRINT(0, "Class extensions:\n%Ps\n", ext_vect);
+    }
+    DEBUG_PRINT(0, "\n\n");
+    avma = av;
+    DEBUG_PRINT(0, "\n--------------------------\nEnd: my_unramified_p_extensions\n--------------------------\n\n");
+}

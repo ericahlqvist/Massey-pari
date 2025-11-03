@@ -449,10 +449,10 @@ int my_massey_matrix (GEN K_ext, GEN K, GEN p, int p_int, int p_rk, GEN Ja_vect,
         
     }
     DEBUG_PRINT(0, ANSI_COLOR_MAGENTA "\n-------------------------------------------------------\n %d-fold Massey products of the form < x, x, ..., x, y >\n-------------------------------------------------------\n\n" ANSI_COLOR_RESET, n+1);
-    DEBUG_PRINT(0, ANSI_COLOR_CYAN "%Ps\n\n" ANSI_COLOR_RESET, massey_matrix);
+    DEBUG_PRINT(1, ANSI_COLOR_CYAN "%Ps\n\n" ANSI_COLOR_RESET, massey_matrix);
     DEBUG_PRINT(0, ANSI_COLOR_YELLOW "Matrix:  \n\n" ANSI_COLOR_RESET);
     for (j=1; j<nr_row+1; ++j) {
-        DEBUG_PRINT(1, ANSI_COLOR_CYAN "%Ps\n\n" ANSI_COLOR_RESET, gel(massey_matrix, j));
+        DEBUG_PRINT(0, ANSI_COLOR_CYAN "%Ps\n\n" ANSI_COLOR_RESET, gel(massey_matrix, j));
     }
     
     
@@ -482,40 +482,39 @@ int my_massey_matrix (GEN K_ext, GEN K, GEN p, int p_int, int p_rk, GEN Ja_vect,
         char letters[] = "abcdefghijklmnopqr";
         DEBUG_PRINT(0, ANSI_COLOR_YELLOW "Massey relations:  \n\n" ANSI_COLOR_RESET);
         int hnf_r_rk = glength(massey_hnf);
-        DEBUG_PRINT(0, "{");
+        DEBUG_PRINT(0, "\"\"\"\"[");
         for (j=1; j<hnf_r_rk+1; j++) {
             for (i=1; i<p_rk+1; ++i) {
                 for (k=1; k<p_rk+1; k++) {
                     if (!gequal0(gel(gel(massey_hnf, j), p_rk*(i-1)+k))) {
                         if (p_int==3) {
                             if (i==k) {
-                                DEBUG_PRINT(0, "%c^3*%Ps", letters[i-1], gel(gel(massey_hnf, j), p_rk*(i-1)+k));
+                                DEBUG_PRINT(0, "%c^%Ps", letters[i-1], gmul(p, gel(gel(massey_hnf, j), p_rk*(i-1)+k)));
                             }
                             else {
                                 if (i<k)
                                 {
-                                    DEBUG_PRINT(0, "((%c,%c), %c)^%Ps", letters[i-1],letters[k-1], letters[i-1], gneg(gel(gel(massey_hnf, j), p_rk*(i-1)+k)));
+                                    DEBUG_PRINT(0, "(%c_%c_%c)^%Ps", letters[i-1],letters[k-1], letters[i-1], gneg(gel(gel(massey_hnf, j), p_rk*(i-1)+k)));
                                 }
                                 else {
-                                    DEBUG_PRINT(0, "((%c,%c), %c)^%Ps", letters[i-1],letters[k-1], letters[i-1], gel(gel(massey_hnf, j), p_rk*(i-1)+k));
+                                    DEBUG_PRINT(0, "(%c_%c_%c)^%Ps", letters[i-1],letters[k-1], letters[i-1], gel(gel(massey_hnf, j), p_rk*(i-1)+k));
                                 }
-                                
                             }
                         }   
                         else {
                             if (i<k)
                             {
-                                DEBUG_PRINT(0, "((%c,%c), %c)^%Ps", letters[i-1],letters[k-1], letters[i-1], gneg(gel(gel(massey_hnf, j), p_rk*(i-1)+k)));
+                                DEBUG_PRINT(0, "(%c_%c_%c)^%Ps", letters[i-1],letters[k-1], letters[i-1], gneg(gel(gel(massey_hnf, j), p_rk*(i-1)+k)));
                             }
                             if (i>k) {
-                                DEBUG_PRINT(0, "((%c,%c), %c)^%Ps", letters[i-1],letters[k-1], letters[i-1], gel(gel(massey_hnf, j), p_rk*(i-1)+k));
+                                DEBUG_PRINT(0, "(%c_%c_%c)^%Ps", letters[i-1],letters[k-1], letters[i-1], gel(gel(massey_hnf, j), p_rk*(i-1)+k));
                             }
                         } 
                     }
                 }
             }
             if (j==hnf_r_rk) {
-                DEBUG_PRINT(0, "}\n");
+                DEBUG_PRINT(0, "]\"\"\"\"");
             }
             else {
                 DEBUG_PRINT(0, ", ");

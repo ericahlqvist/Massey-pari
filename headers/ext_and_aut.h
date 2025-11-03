@@ -23,10 +23,11 @@ GEN my_ext(GEN base, GEN base_clf, GEN p, int p_rk, GEN D_prime_vect)
         q1 = gsubstpol(p1, x, y);
         
         /* Define Lrel/Labs */
-        p1red = rnfpolredbest(base, mkvec2(q1, D_prime_vect), 0);
+        //p1red = rnfpolredbest(base, mkvec2(q1, D_prime_vect), 0);
+        
         // p1red = q1;
         DEBUG_PRINT(1, "Reduced polynomial for relative extension found\n");
-        Lrel = rnfinit(base, p1red);
+        Lrel = rnfinit(base, q1);
 
         DEBUG_PRINT(1, "Lrel found\n");
         DEBUG_PRINT(1, "Abs pol: %Ps\n", rnf_get_polabs(Lrel));
