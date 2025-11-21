@@ -1,3 +1,27 @@
+// MIT License
+
+// Copyright (c) 2025 [Eric Ahlqvist]
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+//-----------------------------------------------------------------------------
+
 //Defines a matrix over F_2 with index (i*k, j) corresponding to 
 //< x_i\cup x_k, (a_j, J_j)>
 
@@ -219,6 +243,10 @@ int my_relations_par(GEN K_ext, GEN K, GEN p, int p_rk, GEN Ja_vect, int r_rk) {
             }
         }
     }
+    else {
+        DEBUG_PRINT(0, ANSI_COLOR_YELLOW "Cup relations:  \n\n" ANSI_COLOR_RESET);
+        DEBUG_PRINT(0, "\"\"\"[]\"\"\"\n");
+    }
     DEBUG_PRINT(1, "\n--------------------------\nEnd: my_relations_par\n--------------------------\n\n");
     DEBUG_PRINT(0, "---------------------------------------------------------------------------------------------------------\n\n");
 
@@ -384,6 +412,10 @@ int my_relations (GEN K_ext, GEN K, GEN p, int p_int, int p_rk, GEN Ja_vect, int
             }
         }
     }
+    else {
+        DEBUG_PRINT(0, ANSI_COLOR_YELLOW "Cup relations:  \n\n" ANSI_COLOR_RESET);
+        DEBUG_PRINT(0, "\"\"\"[]\"\"\"\n");
+    }
     DEBUG_PRINT(1, "\n--------------------------\nEnd: my_relations\n--------------------------\n\n");
     DEBUG_PRINT(1, "---------------------------------------------------------------------------------------------------------\n\n");
     
@@ -523,86 +555,91 @@ int my_massey_matrix (GEN K_ext, GEN K, GEN p, int p_int, int p_rk, GEN Ja_vect,
         DEBUG_PRINT(0, "\n\n");
         //--------------------------------------------------------------------------------
     }
-
-    int is_zero;
-    GEN next_col = zerocol(r_rk);
-    if (mat_rk > 0) {
-        for (i=1; i<p_rk+1; ++i) {
-            for (k=1; k<p_rk+1; ++k) {
-                is_zero = 1;
-                for (j=1; j<r_rk+1; ++j) {
-                    if (!gequal0(gmael2(massey_matrix, j, p_rk*(i-1)+k)))
-                    {
-                        is_zero = 0;
-                        break;
-                    }
-                }
-                //DEBUG_PRINT(1, "< %d, %d > is zero: %d\n", i, k, is_zero);
-                if (i!=k && is_zero)
-                {
-                    DEBUG_PRINT(1, "Start round %d/%d\n\n", i, p_rk);
-                    Labs_cup = gel(gel(K_ext, i), 1);
-                    Lrel_cup = gel(gel(K_ext, i), 2);
-                    sigma_cup = gel(gel(K_ext, i), 3);
-
-                    I_prime_vect = my_H90_vect_2(Labs_cup, Lrel_cup, Lbnr_cup, K, sigma_cup, Ja_vect, stoi(p_int), n+2);
-                    DEBUG_PRINT(1, "I'_vect found\n\n");
-   
-                    // take Artin symbol with resp. to k:th extension
-                    Labs = gel(gel(K_ext, k), 1);
-                    Lrel = gel(gel(K_ext, k), 2);
-                    
-                    for (j=1; j<r_rk+1; ++j) {
-                        I_rel = rnfidealabstorel(Lrel_cup, gel(I_prime_vect, j));
-                        //DEBUG_PRINT(1, "I, %d to rel\n\n", j);
-                        
-                        if (p_int == 3) {
-                            NIpJ = idealmul(K, gel(gel(Ja_vect, j),2), rnfidealnormrel(Lrel_cup, I_rel));
-                        }
-                        else {
-                            NIpJ = rnfidealnormrel(Lrel_cup, I_rel);
-                        }
-                        gel(next_col, j) = stoi(my_Artin_symbol(Labs, Lrel, K, idealred(K,NIpJ), p_int)%p_int);
-                    }
-                    DEBUG_PRINT(0, ANSI_COLOR_YELLOW "\n-----------------------------------------\n%d-fold Massey < x, x, ..., x, y >: \n-----------------------------------------\n\n" ANSI_COLOR_RESET, n+3); 
-                    DEBUG_PRINT(0, ANSI_COLOR_CYAN "%Ps\n\n-------------------------\n\n" ANSI_COLOR_RESET, next_col);
-
-                    if (ZV_equal0(next_col))
-                    {
-                        DEBUG_PRINT(1, "Start round %d/%d\n\n", i, p_rk);
-                        Labs_cup = gel(gel(K_ext, i), 1);
-                        Lrel_cup = gel(gel(K_ext, i), 2);
-                        sigma_cup = gel(gel(K_ext, i), 3);
-
-                        I_prime_vect = my_H90_vect_2(Labs_cup, Lrel_cup, Lbnr_cup, K, sigma_cup, Ja_vect, p, n+4);
-                        DEBUG_PRINT(1, "I'_vect found\n\n");
-    
-                        // take Artin symbol with resp. to k:th extension
-                        Labs = gel(gel(K_ext, k), 1);
-                        Lrel = gel(gel(K_ext, k), 2);
-                        
-                        for (j=1; j<r_rk+1; ++j) {
-                            I_rel = rnfidealabstorel(Lrel_cup, gel(I_prime_vect, j));
-                            //DEBUG_PRINT(1, "I, %d to rel\n\n", j);
-                            
-                            if (p_int == 3) {
-                                NIpJ = idealmul(K, gel(gel(Ja_vect, j),2), rnfidealnormrel(Lrel_cup, I_rel));
-                            }
-                            else {
-                                NIpJ = rnfidealnormrel(Lrel_cup, I_rel);
-                            }
-                            gel(next_col, j) = stoi(my_Artin_symbol(Labs, Lrel, K, idealred(K,NIpJ), p_int)%p_int);
-                        }
-                        DEBUG_PRINT(0, ANSI_COLOR_YELLOW "\n-----------------------------------------\n%d-fold Massey < x, x, ..., x, y >: \n-----------------------------------------\n\n" ANSI_COLOR_RESET, n+5); 
-                        DEBUG_PRINT(0, ANSI_COLOR_CYAN "%Ps\n\n-------------------------\n\n" ANSI_COLOR_RESET, next_col);
-                    }
-                    
-                }
-                
-            }
-        }
-        
+    else {
+        DEBUG_PRINT(0, ANSI_COLOR_YELLOW "Massey relations:  \n\n" ANSI_COLOR_RESET);
+        DEBUG_PRINT(0, "\"\"\"\"[]\"\"\"\"\n\n");
     }
+    
+    // For Higher Massey in case of (some but not all) vanishing lower ones
+    // int is_zero;
+    // GEN next_col = zerocol(r_rk);
+    // if (mat_rk > 0) {
+    //     for (i=1; i<p_rk+1; ++i) {
+    //         for (k=1; k<p_rk+1; ++k) {
+    //             is_zero = 1;
+    //             for (j=1; j<r_rk+1; ++j) {
+    //                 if (!gequal0(gmael2(massey_matrix, j, p_rk*(i-1)+k)))
+    //                 {
+    //                     is_zero = 0;
+    //                     break;
+    //                 }
+    //             }
+    //             //DEBUG_PRINT(1, "< %d, %d > is zero: %d\n", i, k, is_zero);
+    //             if (i!=k && is_zero)
+    //             {
+    //                 DEBUG_PRINT(1, "Start round %d/%d\n\n", i, p_rk);
+    //                 Labs_cup = gel(gel(K_ext, i), 1);
+    //                 Lrel_cup = gel(gel(K_ext, i), 2);
+    //                 sigma_cup = gel(gel(K_ext, i), 3);
+
+    //                 I_prime_vect = my_H90_vect_2(Labs_cup, Lrel_cup, Lbnr_cup, K, sigma_cup, Ja_vect, stoi(p_int), n+2);
+    //                 DEBUG_PRINT(1, "I'_vect found\n\n");
+   
+    //                 // take Artin symbol with resp. to k:th extension
+    //                 Labs = gel(gel(K_ext, k), 1);
+    //                 Lrel = gel(gel(K_ext, k), 2);
+                    
+    //                 for (j=1; j<r_rk+1; ++j) {
+    //                     I_rel = rnfidealabstorel(Lrel_cup, gel(I_prime_vect, j));
+    //                     //DEBUG_PRINT(1, "I, %d to rel\n\n", j);
+                        
+    //                     if (p_int == 3) {
+    //                         NIpJ = idealmul(K, gel(gel(Ja_vect, j),2), rnfidealnormrel(Lrel_cup, I_rel));
+    //                     }
+    //                     else {
+    //                         NIpJ = rnfidealnormrel(Lrel_cup, I_rel);
+    //                     }
+    //                     gel(next_col, j) = stoi(my_Artin_symbol(Labs, Lrel, K, idealred(K,NIpJ), p_int)%p_int);
+    //                 }
+    //                 DEBUG_PRINT(0, ANSI_COLOR_YELLOW "\n-----------------------------------------\n%d-fold Massey < x, x, ..., x, y >: \n-----------------------------------------\n\n" ANSI_COLOR_RESET, n+3); 
+    //                 DEBUG_PRINT(0, ANSI_COLOR_CYAN "%Ps\n\n-------------------------\n\n" ANSI_COLOR_RESET, next_col);
+
+    //                 if (ZV_equal0(next_col))
+    //                 {
+    //                     DEBUG_PRINT(1, "Start round %d/%d\n\n", i, p_rk);
+    //                     Labs_cup = gel(gel(K_ext, i), 1);
+    //                     Lrel_cup = gel(gel(K_ext, i), 2);
+    //                     sigma_cup = gel(gel(K_ext, i), 3);
+
+    //                     I_prime_vect = my_H90_vect_2(Labs_cup, Lrel_cup, Lbnr_cup, K, sigma_cup, Ja_vect, p, n+4);
+    //                     DEBUG_PRINT(1, "I'_vect found\n\n");
+    
+    //                     // take Artin symbol with resp. to k:th extension
+    //                     Labs = gel(gel(K_ext, k), 1);
+    //                     Lrel = gel(gel(K_ext, k), 2);
+                        
+    //                     for (j=1; j<r_rk+1; ++j) {
+    //                         I_rel = rnfidealabstorel(Lrel_cup, gel(I_prime_vect, j));
+    //                         //DEBUG_PRINT(1, "I, %d to rel\n\n", j);
+                            
+    //                         if (p_int == 3) {
+    //                             NIpJ = idealmul(K, gel(gel(Ja_vect, j),2), rnfidealnormrel(Lrel_cup, I_rel));
+    //                         }
+    //                         else {
+    //                             NIpJ = rnfidealnormrel(Lrel_cup, I_rel);
+    //                         }
+    //                         gel(next_col, j) = stoi(my_Artin_symbol(Labs, Lrel, K, idealred(K,NIpJ), p_int)%p_int);
+    //                     }
+    //                     DEBUG_PRINT(0, ANSI_COLOR_YELLOW "\n-----------------------------------------\n%d-fold Massey < x, x, ..., x, y >: \n-----------------------------------------\n\n" ANSI_COLOR_RESET, n+5); 
+    //                     DEBUG_PRINT(0, ANSI_COLOR_CYAN "%Ps\n\n-------------------------\n\n" ANSI_COLOR_RESET, next_col);
+    //                 }
+                    
+    //             }
+                
+    //         }
+    //     }
+        
+    // }
     
 
     return mat_rk;
@@ -613,17 +650,17 @@ void my_print_massey(GEN K_ext, GEN K, GEN p, int p_int, int p_rk, GEN Ja_vect, 
     DEBUG_PRINT(1, "\nSTART: 3-fold\n\n");
     rk_3_fold = my_massey_matrix(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk, 2);
     DEBUG_PRINT(1, "rk_3_fold: %d\n", rk_3_fold);
-    if (rk_3_fold==0)
-    {
-        DEBUG_PRINT(1, "\nSTART: 5-fold\n\n");
-        rk_5_fold = my_massey_matrix(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk, 4);
-        DEBUG_PRINT(1, "rk_5_fold: %d\n", rk_5_fold);
-        if (rk_5_fold==0)
-        {
-            pari_printf("\nSTART: 7-fold\n\n");
-            my_massey_matrix(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk, 6);
-        }
-    }
+    // if (rk_3_fold==0)
+    // {
+    //     DEBUG_PRINT(1, "\nSTART: 5-fold\n\n");
+    //     rk_5_fold = my_massey_matrix(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk, 4);
+    //     DEBUG_PRINT(1, "rk_5_fold: %d\n", rk_5_fold);
+    //     if (rk_5_fold==0)
+    //     {
+    //         pari_printf("\nSTART: 7-fold\n\n");
+    //         my_massey_matrix(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk, 6);
+    //     }
+    // }
         
     
 }

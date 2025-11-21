@@ -1,3 +1,26 @@
+// MIT License
+
+// Copyright (c) 2025 [Eric Ahlqvist]
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+//------------------------------------------------------------------------------
 /*
 Generates all extensions of base together with all necessary automorphisms 
 */
@@ -40,7 +63,7 @@ GEN my_ext(GEN base, GEN base_clf, GEN p, int p_rk, GEN D_prime_vect)
         //Labs = Buchall_param(rnf_get_polabs(Lrel), 1.5,1.5,4, nf_FORCE, DEFAULTPREC);
         DEBUG_PRINT(1, "Labs found\n");
         DEBUG_PRINT(1, "L_cyc[%d]: %Ps\n", i, bnf_get_cyc(Labs));
-        DEBUG_PRINT(1, "rel_pol[%d]: %Ps\n", i, p1red);
+        //DEBUG_PRINT(1, "rel_pol[%d]: %Ps\n", i, p1red);
         DEBUG_PRINT(1, "\nabs pol: %Ps\n\n", gsubstpol(rnf_get_polabs(Lrel),y, s));
 
         s_lift_x = rnfeltup0(Lrel, s, 1);
