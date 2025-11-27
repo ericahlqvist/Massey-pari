@@ -395,10 +395,10 @@ int my_relations (GEN K_ext, GEN K, GEN p, int p_int, int p_rk, GEN Ja_vect, int
             for (i=1; i<=p_rk; ++i) {
                 for (k=i; k<=p_rk; k++) {
                     if (!gequal0(gel(gel(cup_hnf, j), (2*p_rk-(i-2))*(i-1)/2+k-(i-1)))) {
-                        if (i==k) {
+                        if (i==k) { // note here that we use gneg to get the correct sign as in Koch 7.24
                             DEBUG_PRINT(0, "%c^%ld", letters[i-1], p_int*smodis(gneg(gmael2(cup_hnf, j, (2*p_rk-(i-2))*(i-1)/2+k-(i-1))), p_int));
                         }
-                        if (i<k) {
+                        if (i<k) { // note here that we use gneg to get the correct sign as in Koch 7.24
                             DEBUG_PRINT(0, "%c_%c^%ld", letters[i-1],letters[k-1], smodis(gneg(gmael2(cup_hnf, j, (2*p_rk-(i-2))*(i-1)/2+k-(i-1))), p_int));
                         }
                     }
@@ -492,12 +492,6 @@ int my_massey_matrix (GEN K_ext, GEN K, GEN p, int p_int, int p_rk, GEN Ja_vect,
     long mat_rk = FpM_rank((ZM_copy(massey_matrix)), p);
     DEBUG_PRINT(0, ANSI_COLOR_CYAN "%ld\n\n" ANSI_COLOR_RESET, mat_rk);
 
-    // FILE *fptr;
-    // fptr = fopen("data/polynomials/ranks_S3_[2,2]", "a");
-
-    // pari_fDEBUG_PRINT(1, fptr, "pol: %Ps,    rel_rk: %d,     mat_rank: %ld\n", nf_get_pol(bnf_get_nf(K)), r_rk, mat_rk);
-
-    // fclose(fptr);
 
     if (mat_rk > 0 && n < 3) {
         GEN massey_hnf = FpM_red(hnf((ZM_copy(massey_matrix))),p);
@@ -520,16 +514,17 @@ int my_massey_matrix (GEN K_ext, GEN K, GEN p, int p_int, int p_rk, GEN Ja_vect,
                 for (k=1; k<p_rk+1; k++) {
                     if (!gequal0(gel(gel(massey_hnf, j), p_rk*(i-1)+k))) {
                         if (p_int==3) {
-                            if (i==k) {
+                            if (i==k) { // there should be no minus sign here since <x,x,x> corresp. to -B(x) (Vogel thesis 1.2.15)
                                 DEBUG_PRINT(0, "%c^%Ps", letters[i-1], gmul(p, gel(gel(massey_hnf, j), p_rk*(i-1)+k)));
                             }
                             else {
-                                if (i<k)
+                                if (i<k) // gives the exponent for [[a_1,a_2], a_1] 
                                 {
                                     DEBUG_PRINT(0, "(%c_%c_%c)^%Ps", letters[i-1],letters[k-1], letters[i-1], gneg(gel(gel(massey_hnf, j), p_rk*(i-1)+k)));
                                 }
-                                else {
-                                    DEBUG_PRINT(0, "(%c_%c_%c)^%Ps", letters[i-1],letters[k-1], letters[i-1], gel(gel(massey_hnf, j), p_rk*(i-1)+k));
+                                else // gives the exponent for [[a_1,a_2], a_2]
+                                { 
+                                    DEBUG_PRINT(0, "(%c_%c_%c)^%Ps", letters[k-1],letters[i-1], letters[i-1], gel(gel(massey_hnf, j), p_rk*(i-1)+k));
                                 }
                             }
                         }   
@@ -539,7 +534,7 @@ int my_massey_matrix (GEN K_ext, GEN K, GEN p, int p_int, int p_rk, GEN Ja_vect,
                                 DEBUG_PRINT(0, "(%c_%c_%c)^%Ps", letters[i-1],letters[k-1], letters[i-1], gneg(gel(gel(massey_hnf, j), p_rk*(i-1)+k)));
                             }
                             if (i>k) {
-                                DEBUG_PRINT(0, "(%c_%c_%c)^%Ps", letters[i-1],letters[k-1], letters[i-1], gel(gel(massey_hnf, j), p_rk*(i-1)+k));
+                                DEBUG_PRINT(0, "(%c_%c_%c)^%Ps", letters[k-1],letters[i-1], letters[i-1], gel(gel(massey_hnf, j), p_rk*(i-1)+k));
                             }
                         } 
                     }
@@ -560,7 +555,7 @@ int my_massey_matrix (GEN K_ext, GEN K, GEN p, int p_int, int p_rk, GEN Ja_vect,
         DEBUG_PRINT(0, "\"\"\"\"[]\"\"\"\"\n\n");
     }
     
-    // For Higher Massey in case of (some but not all) vanishing lower ones
+    // // For Higher Massey in case of (some but not all) vanishing lower ones
     // int is_zero;
     // GEN next_col = zerocol(r_rk);
     // if (mat_rk > 0) {

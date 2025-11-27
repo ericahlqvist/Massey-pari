@@ -68,12 +68,12 @@ main (int argc, char *argv[])
     //--------------------------------------------------
     // pari_init(1L<<30,500000);
     entree ep = {"_worker",0,(void*)compute_my_relations,20,"LG",""};
-    pari_init_opts(1L<<30,500000, INIT_JMPm|INIT_SIGm|INIT_DFTm|INIT_noIMTm);
+    pari_init_opts(1L<<30,1048576, INIT_JMPm|INIT_SIGm|INIT_DFTm|INIT_noIMTm);
     pari_add_function(&ep); /* add Cworker function to gp */
     pari_mt_init(); /* ... THEN initialize parallelism */
     paristack_setsize(1L<<30, 1L<<33);
     sd_threadsizemax("2147483648", 0);
-    //setalldebug(0);
+    setalldebug(0);
     //--------------------------------------------------
     
     GEN p, K, f, Kcyc, p_ClFld_pol, J_vect, Ja_vect, D, D_prime_vect;
@@ -89,7 +89,7 @@ main (int argc, char *argv[])
     //--------------------------------------------------
     // Define base field K
     K = Buchall(f, nf_FORCE, DEFAULTPREC);
-
+    //K = Buchall_param(f, 1.5, 1.5, 4, nf_FORCE, DEFAULTPREC);
     //--------------------------------------------------
     // Discriminant
     D = nf_get_disc(bnf_get_nf(K));
@@ -117,11 +117,13 @@ main (int argc, char *argv[])
     //--------------------------------------------------
     // Find data of unramified extensions
     // my_unramified_p_extensions(K, p, D_prime_vect);
-
+    
     //-------------------------------------------------------------------------------------------------------------------
     // Define polynomials for the generating fields for the part of the Hilbert class field corresp to Cl(K)/p. 
     //-------------------------------------------------------------------------------------------------------------------
+    
     p_ClFld_pol = bnrclassfield(K, p, 0, DEFAULTPREC);
+
     DEBUG_PRINT(1, "p Cl Fld: %Ps\n", p_ClFld_pol);
     DEBUG_PRINT(1, ANSI_COLOR_GREEN "Found!\n\n" ANSI_COLOR_RESET);
     
