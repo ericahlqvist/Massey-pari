@@ -42,7 +42,11 @@ GEN my_ext(GEN base, GEN base_clf, GEN p, int p_rk, GEN D_prime_vect)
     
     int i, j;
     for (i=1; i<p_rk+1; ++i) {
-        p1 = gel(base_clf, i);
+        switch (typ(gel(base_clf, i))) {
+            case t_VEC:    p1 = gel(gel(base_clf, i), 1); break;
+            case t_POL:    p1 = gel(base_clf, i); break;
+        }
+        
         q1 = gsubstpol(p1, x, y);
         
         /* Define Lrel/Labs */

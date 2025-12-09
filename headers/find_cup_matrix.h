@@ -501,13 +501,32 @@ int my_massey_matrix (GEN K_ext, GEN K, GEN p, int p_int, int p_rk, GEN Ja_vect,
         }
         
         DEBUG_PRINT(0, "\n\n");
-        
+        //--------------------------------------------------------------------------------
+        // Bockstein relations for presentation of Q_2
+        DEBUG_PRINT(0, ANSI_COLOR_YELLOW "Bockstein relations:  \n\n" ANSI_COLOR_RESET);
+        char letters[] = "abcdefghijklmnopqr";
+        int hnf_r_rk = glength(massey_hnf);
+        DEBUG_PRINT(0, "\"\"\"[");
+        for (j=1; j<=hnf_r_rk; j++) {
+            for (i=1; i<=p_rk; ++i) {
+                if (!gequal0(gel(gel(massey_hnf, j), p_rk*(i-1)+i))) {
+                    DEBUG_PRINT(0, "%c^%Ps", letters[i-1], gmul(p, gel(gel(massey_hnf, j), p_rk*(i-1)+i)));
+                }    
+            }
+            if (j==hnf_r_rk) {
+                DEBUG_PRINT(0, "]\"\"\"\n");
+            }
+            else {
+                DEBUG_PRINT(0, ", ");
+            }
+        }
+        DEBUG_PRINT(0, "\n\n");
 
         //--------------------------------------------------------------------------------
         // Massey relations for presentation of ZQ_3
-        char letters[] = "abcdefghijklmnopqr";
+        // char letters[] = "abcdefghijklmnopqr";
         DEBUG_PRINT(0, ANSI_COLOR_YELLOW "Massey relations:  \n\n" ANSI_COLOR_RESET);
-        int hnf_r_rk = glength(massey_hnf);
+        // int hnf_r_rk = glength(massey_hnf);
         DEBUG_PRINT(0, "\"\"\"\"[");
         for (j=1; j<hnf_r_rk+1; j++) {
             for (i=1; i<p_rk+1; ++i) {

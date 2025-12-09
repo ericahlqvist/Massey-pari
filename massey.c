@@ -116,12 +116,20 @@ main (int argc, char *argv[])
     
     //--------------------------------------------------
     // Find data of unramified extensions
-    // my_unramified_p_extensions(K, p, D_prime_vect);
+    //my_unramified_p_extensions(K, p, D_prime_vect);
     
     //-------------------------------------------------------------------------------------------------------------------
     // Define polynomials for the generating fields for the part of the Hilbert class field corresp to Cl(K)/p. 
     //-------------------------------------------------------------------------------------------------------------------
     
+
+    // GEN subgroups = subgrouplist0(bnf_get_cyc(K), stoi(657), 0);
+    // DEBUG_PRINT(0, "subgroups: %Ps\n\n", subgroups);
+    // // pari_close();
+    // // exit(0);
+    // p_ClFld_pol = bnrclassfield(K, mkvec2(gel(subgroups, 7),gel(subgroups, 9)), 0, DEFAULTPREC);
+    // // p_ClFld_pol = bnrclassfield(K, p, 0, DEFAULTPREC);
+    // DEBUG_PRINT(0, "p Cl Fld (allowing ramification at infinity): %Ps\n\n", p_ClFld_pol);
     p_ClFld_pol = bnrclassfield(K, p, 0, DEFAULTPREC);
 
     DEBUG_PRINT(1, "p Cl Fld: %Ps\n", p_ClFld_pol);
@@ -170,7 +178,7 @@ main (int argc, char *argv[])
     // int mat_rk = my_relations(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk);
     //--------------------------------------------------
     // Parallell version
-    int mat_rk = my_relations_par(K_ext, K, p, p_rk, Ja_vect, r_rk);
+    // int mat_rk = my_relations_par(K_ext, K, p, p_rk, Ja_vect, r_rk);
     //---------------------
 
     //--------------------------------------------------
@@ -179,7 +187,7 @@ main (int argc, char *argv[])
     // Defines a matrix over F_p with index (i*k, j) corresponding to 
     // < x_i, x_i, ..., x_i, x_k, (a_j, J_j) > if i is not equal to j and
     //--------------------------------------------------
-
+    int mat_rk = 0;
     if ((mat_rk<3 && p_int>2) || (mat_rk==0 && p_int==2))
     {
         my_print_massey(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk);
