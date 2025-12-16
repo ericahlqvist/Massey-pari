@@ -35,6 +35,7 @@ Since k(q)^x is cyclic, it is enough to check that sigma_p(g) = g^N(p) for a gen
 int my_Artin_symbol (GEN Labs, GEN Lrel, GEN K, GEN I_K, int p) {
     DEBUG_PRINT(1, "\n--------------------------------\nStart: my_artin_symbol\n--------------------------------\n\n");
     pari_sp av = avma;
+    // One needs to add a reference to rnfcycaut, allauts and cyclicrelfrob in paridecl.h before compiling pari
     GEN sigma_rel = rnfcycaut(Lrel), Gal_rel = allauts(Lrel, sigma_rel);
     DEBUG_PRINT(1, "Gal_rel: %Ps\n\n", Gal_rel);
 
