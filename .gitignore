@@ -5,7 +5,11 @@ Massey-pari.code-workspace
 .vscode/launch.json
 .vscode/settings.json
 .vscode/tasks.json
-massey.dSYM/Contents/Info.plist
-massey.dSYM/Contents/Resources/Relocations/aarch64/massey.yml
+massey.dSYM/
 make.sh
 settings.json
+
+# Build directory
+build/
+*.o
+*.dSYM/

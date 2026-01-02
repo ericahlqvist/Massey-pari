@@ -41,10 +41,10 @@
 #define DEBUG_PRINT(level, ...) \
     do { if (MY_DEBUGLEVEL >= (level)) pari_printf(__VA_ARGS__); } while (0)
 
-#include "headers/misc_functions.h"
-#include "headers/artin_symbol.h"
-#include "headers/ext_and_aut.h"
-#include "headers/find_cup_matrix.h"
+#include "../headers/misc_functions.h"
+#include "../headers/artin_symbol.h"
+#include "../headers/ext_and_aut.h"
+#include "../headers/find_cup_matrix.h"
 
 // Function prototype for parallel computation
 GEN compute_my_relations(long i, GEN args);
@@ -204,8 +204,6 @@ main (int argc, char *argv[])
 
 
 
-
-
     //--------------------------------------------------
     // Compute the CPU time
     clock_t duration = (clock()-start) / 1000; // Compute CPU duration in microseconds
@@ -235,3 +233,4 @@ main (int argc, char *argv[])
     printf("\n---------------------------------------------------------------------------------------------------------\nEnd program\n---------------------------------------------------------------------------------------------------------\n\n");
     return 0;
 }
+
