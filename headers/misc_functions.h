@@ -112,4 +112,16 @@ GEN my_ideal_lifts (GEN Labs, GEN Lrel, GEN K, GEN p);
 
 void my_unramified_p_extensions_with_transfer(GEN K, GEN p, GEN D_prime_vect);
 
+/*------------------------------------
+ Find the best subgroups (those with smallest class numbers)
+------------------------------------
+* Input:
+* K - a bnf (number field)
+* p_rank - number of subgroups to return
+* subgroups - vector of subgroups
+
+* Output: vector of length p_rank containing the subgroups with smallest class numbers
+-----------------------*/
+GEN my_best_subgroups(GEN K, long p_rank, GEN subgroups);
+
 #endif // MISC_FUNCTIONS_H

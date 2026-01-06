@@ -116,31 +116,43 @@ main (int argc, char *argv[])
     
     //--------------------------------------------------
     // Find data of unramified extensions
-    //my_unramified_p_extensions(K, p, D_prime_vect);
+    // my_unramified_p_extensions(K, p, D_prime_vect);
     
     //-------------------------------------------------------------------------------------------------------------------
     // Define polynomials for the generating fields for the part of the Hilbert class field corresp to Cl(K)/p. 
     //-------------------------------------------------------------------------------------------------------------------
     
-
+    //--------------------------------------------------
+    // Find generators for the p-torsion of the class group
+    J_vect = my_find_p_gens(K, p);
+    p_rk = lg(J_vect)-1;
+    pari_printf("p-rank: %d --> This is the rank of H^1(X,Z/pZ) and H^2(X_fl, mu_p)\n\n", p_rk);
+    //--------------------------------------------------
     // GEN subgroups = subgrouplist0(bnf_get_cyc(K), stoi(657), 0);
+
+    // Here we generate all subgroups of index p in the class group
+    
+    GEN subgroups = subgrouplist0(bnf_get_cyc(K), mkvec(p), 0);
     // DEBUG_PRINT(0, "subgroups: %Ps\n\n", subgroups);
     // // pari_close();
     // // exit(0);
-    // p_ClFld_pol = bnrclassfield(K, mkvec2(gel(subgroups, 7),gel(subgroups, 9)), 0, DEFAULTPREC);
+
+    // Here we pick out the subgroups of index p corresponding those p-extensions with smallest class group, but still forming a basis for H^1(X, Z/pZ) 
+    GEN best_subgroups = my_best_subgroups(K, p_rk, subgroups);
+    p_ClFld_pol = bnrclassfield(K, best_subgroups, 0, DEFAULTPREC);
+
+    DEBUG_PRINT(1, "best_subgroups: %Ps\n\n", best_subgroups);
+    // p_ClFld_pol = bnrclassfield(K, mkvec2(gel(subgroups, 1),gel(subgroups, 2)), 0, DEFAULTPREC);
     // // p_ClFld_pol = bnrclassfield(K, p, 0, DEFAULTPREC);
     // DEBUG_PRINT(0, "p Cl Fld (allowing ramification at infinity): %Ps\n\n", p_ClFld_pol);
-    p_ClFld_pol = bnrclassfield(K, p, 0, DEFAULTPREC);
+
+    // If we don't care which subgroups we use, we can use the default:
+    //p_ClFld_pol = bnrclassfield(K, p, 0, DEFAULTPREC);
 
     DEBUG_PRINT(1, "p Cl Fld: %Ps\n", p_ClFld_pol);
     DEBUG_PRINT(1, ANSI_COLOR_GREEN "Found!\n\n" ANSI_COLOR_RESET);
     
-    //--------------------------------------------------
-    // Find generators for the p-torsion of the class group
-    J_vect = my_find_p_gens(K, p);
-    p_rk = glength(J_vect);
-    pari_printf("p-rank: %d --> This is the rank of H^1(X,Z/pZ) and H^2(X_fl, mu_p)\n\n", p_rk);
-    //--------------------------------------------------
+    
 
     //--------------------------------------------------
     // find generators for the group of units modulo p

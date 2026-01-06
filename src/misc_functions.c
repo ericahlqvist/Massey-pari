@@ -473,11 +473,14 @@ GEN my_H90_vect_2 (GEN Labs, GEN Lrel, GEN Lbnr, GEN K, GEN sigma, GEN Ja_vect, 
                 DEBUG_PRINT(1, "\nSearching: %d/%d\n", j, f);
 
                 //------------------------------------------------------------------------------------------------
+
                 // This is our I+I'' as explained above
                 I_fact = ZV_ZV_mod(gadd(gel(F, 1), gtocol(gel(ker_T, j))), cyc);
+                
+                DEBUG_PRINT(1, "\nI_fact found: %Ps\n", I_fact);
                 F_ker_T = idealred0(Labs, idealfactorback(Labs, mkmat2(gtocol(bnf_get_gen(Labs)), I_fact), NULL, 0), NULL);
-
-
+                // F_ker_T = idealfactorback(Labs, mkmat2(gtocol(bnf_get_gen(Labs)), I_fact), NULL, 0);
+                DEBUG_PRINT(1, "\nF_ker_T found: %Ps\n", F_ker_T);
                //------------------------------------------------------------------------------------------------
                 // Now find the t satisfying (1-sigma)I+div(t) = iJ or (1-sigma)I+div(t) = iJ^{-1} if n>1
                 // flag nf_GENMAT: Return t in factored form (compact representation), as a small product of S-units for a small set of finite places S, possibly with huge exponents. This kind of result can be cheaply mapped to K^*/(K^*)^l or to C or Q_p to bounded accuracy and this is usually enough for applications.
@@ -728,5 +731,70 @@ void my_unramified_p_extensions_with_transfer(GEN K, GEN p, GEN D_prime_vect) {
     DEBUG_PRINT(0, "\n\n");
     avma = av;
     DEBUG_PRINT(0, "\n--------------------------\nEnd: my_unramified_p_extensions\n--------------------------\n\n");
+}
+
+/*------------------------------------
+ Find the best subgroups (those with smallest class numbers)
+------------------------------------
+* Input:
+* K - a bnf (number field)
+* p_rank - number of subgroups to return
+* subgroups - vector of subgroups
+
+* Output: vector of length p_rank containing the subgroups with smallest class numbers
+-----------------------*/
+GEN my_best_subgroups(GEN K, long p_rank, GEN subgroups) {
+    DEBUG_PRINT(1, "\n--------------------------\nStart: my_best_subgroups\n--------------------------\n\n");
+    pari_sp av0 = avma;
+    long n_subgroups = lg(subgroups)-1;
+    DEBUG_PRINT(1, "n_subgroups: %ld\n", n_subgroups);
+    long i;
+    
+    // Create vector to store class numbers
+    GEN class_numbers = zerovec(n_subgroups);
+    
+    // Compute class number for each subgroup
+    for (i = 1; i <= n_subgroups; i++) {
+        
+        GEN H = gel(subgroups, i);
+        GEN pol_L_H_vec = bnrclassfield(K, mkvec(H), 0, DEFAULTPREC);
+
+        DEBUG_PRINT(1, "pol_L_H_vec: %Ps\n", pol_L_H_vec);
+        // Extract the polynomial (bnrclassfield may return a vector)
+        GEN pol_L_H = (typ(pol_L_H_vec) == t_VEC && lg(pol_L_H_vec) > 1) ? gel(gel(pol_L_H_vec, 1), 1) : gel(pol_L_H_vec, 1);
+
+        GEN x = pol_x(fetch_user_var("x"));
+        GEN y = pol_x(fetch_user_var("y"));
+        
+        pol_L_H = gsubstpol(pol_L_H, x, y);
+
+
+        DEBUG_PRINT(1, "pol_L_H: %Ps\n", pol_L_H);
+        GEN L_H_rel = rnfinit(K, pol_L_H);
+        GEN L_H_abs = Buchall(rnf_get_polabs(L_H_rel), nf_FORCE, DEFAULTPREC);
+        GEN L_H_cl_nr = bnf_get_no(L_H_abs);
+        DEBUG_PRINT(1, "L_H_cl_nr: %Ps\n", L_H_cl_nr);
+        
+        gel(class_numbers, i) = L_H_cl_nr;
+        
+    }
+    DEBUG_PRINT(1, "class_numbers: %Ps\n", class_numbers);
+    // Get sorted indices based on class numbers
+    GEN sorted_indices = gtovec(indexsort(class_numbers));
+    DEBUG_PRINT(1, "sorted_indices: %Ps\n", sorted_indices);
+
+
+    // Extract the p_rank best subgroups
+    long result_len = (p_rank < n_subgroups) ? p_rank : n_subgroups;
+    GEN result = zerovec(result_len);
+    
+    for (i = 1; i <= result_len; i++) {
+        long idx = itos(gel(sorted_indices, i));
+        gel(result, i) = gel(subgroups, idx);
+    }
+    DEBUG_PRINT(1, "result: %Ps\n", result);
+    result = gerepilecopy(av0, result);
+    DEBUG_PRINT(1, "\n--------------------------\nEnd: my_best_subgroups\n--------------------------\n\n");
+    return result;
 }
 
