@@ -29,7 +29,7 @@
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
-#define MY_DEBUGLEVEL 0
+#define MY_DEBUGLEVEL 1
 #define DEBUG_PRINT(level, ...) \
     do { if (MY_DEBUGLEVEL >= (level)) pari_printf(__VA_ARGS__); } while (0)
 
@@ -63,11 +63,11 @@ GEN my_ext(GEN base, GEN base_clf, GEN p, int p_rk, GEN D_prime_vect)
         q1 = gsubstpol(p1, x, y);
         
         /* Define Lrel/Labs */
-        // p1red = rnfpolredbest(base, mkvec2(q1, D_prime_vect), 0);
+        p1red = rnfpolredbest(base, mkvec2(q1, D_prime_vect), 0);
         
         // p1red = q1;
         DEBUG_PRINT(1, "Reduced polynomial for relative extension found\n");
-        Lrel = rnfinit(base, q1);
+        Lrel = rnfinit(base, p1red);
 
         DEBUG_PRINT(1, "Lrel found\n");
         DEBUG_PRINT(1, "Abs pol: %Ps\n", rnf_get_polabs(Lrel));

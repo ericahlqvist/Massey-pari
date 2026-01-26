@@ -35,7 +35,7 @@
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
-#define MY_DEBUGLEVEL 0
+#define MY_DEBUGLEVEL 1
 #define DEBUG_PRINT(level, ...) \
     do { if (MY_DEBUGLEVEL >= (level)) pari_printf(__VA_ARGS__); } while (0)
 
@@ -743,7 +743,7 @@ void my_unramified_p_extensions_with_transfer(GEN K, GEN p, GEN D_prime_vect) {
 
 * Output: vector of length p_rank containing the subgroups with smallest class numbers
 -----------------------*/
-GEN my_best_subgroups(GEN K, long p_rank, GEN subgroups) {
+GEN my_best_subgroups(GEN K, long p_rank, GEN subgroups, GEN D_prime_vect) {
     DEBUG_PRINT(1, "\n--------------------------\nStart: my_best_subgroups\n--------------------------\n\n");
     pari_sp av0 = avma;
     long n_subgroups = lg(subgroups)-1;
@@ -766,7 +766,7 @@ GEN my_best_subgroups(GEN K, long p_rank, GEN subgroups) {
         GEN x = pol_x(fetch_user_var("x"));
         GEN y = pol_x(fetch_user_var("y"));
         
-        pol_L_H = gsubstpol(pol_L_H, x, y);
+        pol_L_H = rnfpolredbest(K, mkvec2(gsubstpol(pol_L_H, x, y), D_prime_vect), 0);
 
 
         DEBUG_PRINT(1, "pol_L_H: %Ps\n", pol_L_H);

@@ -122,6 +122,6 @@ void my_unramified_p_extensions_with_transfer(GEN K, GEN p, GEN D_prime_vect);
 
 * Output: vector of length p_rank containing the subgroups with smallest class numbers
 -----------------------*/
-GEN my_best_subgroups(GEN K, long p_rank, GEN subgroups);
+GEN my_best_subgroups(GEN K, long p_rank, GEN subgroups, GEN D_prime_vect);
 
 #endif // MISC_FUNCTIONS_H

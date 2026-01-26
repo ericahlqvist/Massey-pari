@@ -35,7 +35,7 @@
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
 // Debug level
-#define MY_DEBUGLEVEL 0
+#define MY_DEBUGLEVEL 1
 
 // Debug printing function
 #define DEBUG_PRINT(level, ...) \
@@ -139,7 +139,7 @@ main (int argc, char *argv[])
     // // exit(0);
 
     // Here we pick out the subgroups of index p corresponding those p-extensions with smallest class group, but still forming a basis for H^1(X, Z/pZ) 
-    GEN best_subgroups = my_best_subgroups(K, p_rk, subgroups);
+    GEN best_subgroups = my_best_subgroups(K, p_rk, subgroups, D_prime_vect);
     p_ClFld_pol = bnrclassfield(K, best_subgroups, 0, DEFAULTPREC);
 
     DEBUG_PRINT(1, "best_subgroups: %Ps\n\n", best_subgroups);
@@ -148,7 +148,7 @@ main (int argc, char *argv[])
     // DEBUG_PRINT(0, "p Cl Fld (allowing ramification at infinity): %Ps\n\n", p_ClFld_pol);
 
     // If we don't care which subgroups we use, we can use the default:
-    //p_ClFld_pol = bnrclassfield(K, p, 0, DEFAULTPREC);
+    // p_ClFld_pol = bnrclassfield(K, p, 0, DEFAULTPREC);
 
     DEBUG_PRINT(1, "p Cl Fld: %Ps\n", p_ClFld_pol);
     DEBUG_PRINT(1, ANSI_COLOR_GREEN "Found!\n\n" ANSI_COLOR_RESET);
@@ -191,7 +191,7 @@ main (int argc, char *argv[])
     // int mat_rk = my_relations(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk);
     //--------------------------------------------------
     // Parallell computation of the cup products. These are always zero for imaginary quadratic fields. 
-    // int mat_rk = my_relations_par(K_ext, K, p, p_rk, Ja_vect, r_rk);
+    int mat_rk = my_relations_par(K_ext, K, p, p_rk, Ja_vect, r_rk);
     //---------------------
 
     //--------------------------------------------------
@@ -200,7 +200,7 @@ main (int argc, char *argv[])
     // Defines a matrix over F_p with index (i*k, j) corresponding to 
     // < x_i, x_i, ..., x_i, x_k, (a_j, J_j) > if i is not equal to j and
     //--------------------------------------------------
-    int mat_rk = 0;
+    // int mat_rk = 0;
     if ((mat_rk<3 && p_int>2) || (mat_rk==0 && p_int==2))
     {
         my_print_massey(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk);
