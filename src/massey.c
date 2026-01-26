@@ -52,7 +52,7 @@ GEN compute_my_relations(long i, GEN args);
 int
 main (int argc, char *argv[])	  
 {
-    printf(ANSI_COLOR_YELLOW "\n---------------------------------------------------------------------------------------------------------\nStarting program: finding Massey products and relations for Q_2\n---------------------------------------------------------------------------------------------------------\n\n" ANSI_COLOR_RESET);
+    printf(ANSI_COLOR_YELLOW "\n---------------------------------------------------------------------------------------------------------\nStarting program: Massey products\n---------------------------------------------------------------------------------------------------------\n\n" ANSI_COLOR_RESET);
 
     // Start timer (actual time)
     struct timespec start_time, end_time;
@@ -61,7 +61,7 @@ main (int argc, char *argv[])
     // Start timer (CPU time)
     clock_t start = clock();
 
-    int p_int, p_rk, r_rk, min, sec, msec;
+    int min, sec, msec;
     
     //--------------------------------------------------
     // Initialize PARI/GP
@@ -76,6 +76,7 @@ main (int argc, char *argv[])
     setalldebug(0);
     //--------------------------------------------------
     
+    int p_int, p_rk, r_rk;
     GEN p, K, f, Kcyc, p_ClFld_pol, J_vect, Ja_vect, D, D_prime_vect;
 
     // Read the prime number p from arguments
@@ -109,7 +110,7 @@ main (int argc, char *argv[])
     // Class group of K (cycle type)
     Kcyc = bnf_get_cyc(K);
     pari_printf("K cyc: %Ps\n\n", Kcyc);
-
+    // pari_printf("r_2(K): %ld\n\n", nf_get_r2(bnf_get_nf(K)));
     //--------------------------------------------------
     // Test if p divides the class number. If not, then H^1(X, Z/pZ) = 0 and there is nothing to compute. 
     my_test_p_rank(K, p_int);
@@ -189,7 +190,7 @@ main (int argc, char *argv[])
     // Non-parallel version
     // int mat_rk = my_relations(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk);
     //--------------------------------------------------
-    // Parallell version
+    // Parallell computation of the cup products. These are always zero for imaginary quadratic fields. 
     // int mat_rk = my_relations_par(K_ext, K, p, p_rk, Ja_vect, r_rk);
     //---------------------
 

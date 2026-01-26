@@ -600,17 +600,22 @@ void my_print_massey(GEN K_ext, GEN K, GEN p, int p_int, int p_rk, GEN Ja_vect, 
     DEBUG_PRINT(1, "\nSTART: 3-fold\n\n");
     rk_3_fold = my_massey_matrix(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk, 2);
     DEBUG_PRINT(1, "rk_3_fold: %d\n", rk_3_fold);
-    // if (rk_3_fold==0)
-    // {
-    //     DEBUG_PRINT(1, "\nSTART: 5-fold\n\n");
-    //     rk_5_fold = my_massey_matrix(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk, 4);
-    //     DEBUG_PRINT(1, "rk_5_fold: %d\n", rk_5_fold);
-    //     if (rk_5_fold==0)
-    //     {
-    //         pari_printf("\nSTART: 7-fold\n\n");
-    //         my_massey_matrix(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk, 6);
-    //     }
-    // }
+
+
+
+
+    // Higher Massey products
+    if (rk_3_fold==0)
+    {
+        DEBUG_PRINT(1, "\nSTART: 5-fold\n\n");
+        rk_5_fold = my_massey_matrix(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk, 4);
+        DEBUG_PRINT(1, "rk_5_fold: %d\n", rk_5_fold);
+        if (rk_5_fold==0)
+        {
+            pari_printf("\nSTART: 7-fold\n\n");
+            my_massey_matrix(K_ext, K, p, p_int, p_rk, Ja_vect, r_rk, 6);
+        }
+    }
         
     
 }
