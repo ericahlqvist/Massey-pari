@@ -29,7 +29,7 @@
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
-#define MY_DEBUGLEVEL 1
+#define MY_DEBUGLEVEL 0
 #define DEBUG_PRINT(level, ...) \
     do { if (MY_DEBUGLEVEL >= (level)) pari_printf(__VA_ARGS__); } while (0)
 
